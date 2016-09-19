@@ -18,7 +18,7 @@ articles = {
     	This is article 
     	<h1>TWO</h1>
     	lol
-    	'
+    	`
     },
     
     'article-three': {
@@ -27,9 +27,9 @@ articles = {
     	This is article 
     	<h1>THREE</h1>
     	lol
-    	'
+    	`
     }
-}
+};
 
 
 function createPage(data) {
@@ -56,8 +56,9 @@ app.get('/', function (req, res) {
   res.sendFile(path.join(__dirname, 'ui', 'index.html'));
 });
 
-app.get('/articleName', function (req, res) {
-  res.send(createPage(articles.(req.params.articleName)));
+app.get('/:articleName', function (req, res) {
+    var articleName = req.params.articleName;
+    res.send(createPage(articleName));
 });
 
 app.get('/ui/style.css', function (req, res) {

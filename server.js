@@ -6,11 +6,30 @@ var app = express();
 app.use(morgan('combined'));
 
 
-
-var articleone = {
-	title: 'Article One',
-	content: 'This is article oneeeeeeeeeeeeeeeeeeeeeeeeeee<h1>ONE</h1>lol'
-};
+articles = {
+    'article-one': {
+    	title: 'Article One',
+    	content: 'This is article oneeeeeeeeeeeeeeeeeeeeeeeeeee<h1>ONE</h1>lol'
+    },
+    
+    'article-two': {
+    	title: 'Article Tqo',
+    	content: `
+    	This is article 
+    	<h1>TWO</h1>
+    	lol
+    	'
+    },
+    
+    'article-three': {
+    	title: 'Article Three',
+    	content: `
+    	This is article 
+    	<h1>THREE</h1>
+    	lol
+    	'
+    }
+}
 
 
 function createPage(data) {
@@ -37,8 +56,8 @@ app.get('/', function (req, res) {
   res.sendFile(path.join(__dirname, 'ui', 'index.html'));
 });
 
-app.get('/article-one', function (req, res) {
-  res.send(createPage(articleone));
+app.get('/articleName', function (req, res) {
+  res.send(createPage(articles.(req.params.articleName)));
 });
 
 app.get('/ui/style.css', function (req, res) {

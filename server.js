@@ -6,17 +6,18 @@ var app = express();
 app.use(morgan('combined'));
 
 
-var article-one = {
-	title: "Article One";
-	content: `This is article oneeeeeeeeeeeeeeeeeeeeeeeeeee
-	<h1>ONE</h1>
-	lol
-	`;
-	style: "style.css";
-}
+
+var articleone = {
+	title: 'Article One',
+	content: 'This is article oneeeeeeeeeeeeeeeeeeeeeeeeeee<h1>ONE</h1>lol'
+};
 
 
-funtion createPage(data){
+function createPage(data) {
+    
+    var title = data.title;
+    var content = data.content;
+    
 	var htmlTemplate = `
 	<html>
 		<head>

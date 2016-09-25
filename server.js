@@ -64,6 +64,8 @@ app.get('/counter', function(req, res){
 
 app.get('/submit-name', function(req, res){
     var new_name = req.query.name;
+    if (new_name==null)
+        new_name="default";
     names.push(new_name);
     res.send(JSON.stringify(names));
 });

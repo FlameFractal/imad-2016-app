@@ -4,7 +4,7 @@ var path = require('path');
 
 var app = express();
 app.use(morgan('combined'));
-app.use("/", express.static(__dirname + '/ui' , options));
+app.use("/", express.static(__dirname + '/ui'));
 
 
 /* All the global variables */

@@ -4,11 +4,6 @@ var path = require('path');
 
 var app = express();
 app.use(morgan('combined'));
-
-
-var options = {
-    index: false
-}
 app.use("/", express.static(__dirname + '/ui' , options));
 
 

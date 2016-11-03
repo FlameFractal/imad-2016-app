@@ -4,7 +4,7 @@ var path = require('path');
 
 var app = express();
 app.use(morgan('combined'));
-
+app.use("/", express.static(__dirname + '/ui'));
 
 articles = {
     'article-one': {
@@ -63,6 +63,8 @@ app.get('/counter', function(req, res){
 });
 
 app.get('/submit-name', function(req, res){
+	console.log(req);
+	console.log(req.query.name);
     var new_name = req.query.name;
     if (new_name==null)
         new_name="default";

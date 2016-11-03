@@ -7,10 +7,12 @@ app.use(morgan('combined'));
 app.use("/", express.static(__dirname + '/ui'));
 
 
-function get_comments(data){};
+/* All the global variables */
+var counter = 0;
 
-// var counter = 0;
-// var names = [];
+
+/* Feature functions */
+function get_comments(data){};
 
 var posts = {
     '1' : {
@@ -72,7 +74,8 @@ var posts = {
                     <h2 class="section-heading">Reaching for the Stars</h2>
 
                     <p>As we got further and further away, it [the Earth] diminished in size. Finally it shrank to the size of a marble, the most beautiful you can imagine. That beautiful, warm, living object looked so fragile, so delicate, that if you touched it with a finger it would crumble and fall apart. Seeing this has to change a man.</p>
-        `}}
+        `
+    }}
 
 function homeTemplate(){
 
@@ -192,12 +195,12 @@ function homeTemplate(){
                                     </a>
                                 </li>
                             </ul>
-                            <p class="copyright text-muted">Visit Counter =  <span>2016</span></p>
+                            <p class="copyright text-muted">This website has been visited <b><span id="counter">2016</span></b> times since inception.</p>
                         </div>
                     </div>
                 </div>
             </footer>
-            <script
+            <script src="main.js"></script>
             <script src="vendor/jquery/jquery.min.js"></script>
             <script src="vendor/bootstrap/js/bootstrap.min.js"></script>
             <script src="js/jqBootstrapValidation.js"></script>
@@ -306,11 +309,12 @@ function postTemplate(data){
                                     </a>
                                 </li>
                             </ul>
-                            <p class="copyright text-muted">Visit Counter =  <span>2016</span></p>
+                            <p class="copyright text-muted">This website has been visited <b><span id="counter">2016</span></b> times since inception.</p>
                         </div>
                     </div>
                 </div>
             </footer>
+            <script src="main.js"></script>
             <script src="vendor/jquery/jquery.min.js"></script>
             <script src="vendor/bootstrap/js/bootstrap.min.js"></script>
             <script src="js/jqBootstrapValidation.js"></script>
@@ -324,7 +328,7 @@ function postTemplate(data){
 
 
 
-
+// var names = [];
 // app.get('/submit-name', function(req, res){
 // 	console.log(req);
 // 	console.log(req.query.name);
@@ -346,7 +350,11 @@ app.get('/index.html', function (req, res) {
 });
 
 app.get('/counter', function(req, res){
+    /*Query the DB for counter value*/
+
+    /*Increment it and store it back in the DB*/
     counter = counter + 1;
+
     res.send(counter.toString());
 });
 

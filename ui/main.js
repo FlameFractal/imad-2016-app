@@ -4,8 +4,7 @@ var name = document.getElementById('name');
 var return_names;
 var name_list;
 
-submit.onclick = function(){
-
+window.onload=function(){
 	//Request for the COUNTER API endpoint
 	var req = new XMLHttpRequest();	
 	req.onreadystatechange = function(){
@@ -15,11 +14,12 @@ submit.onclick = function(){
 			counter.innerHTML = count.toString();
 		}
 	};
-	req.open("GET", document.URL+"counter", true);
+	req.open("GET", "http://"+window.location.host+"/counter", true);
 	req.send(null);
 
+}
 
-
+submit.onclick = function(){
 	//Request for the NAMES API endpoint
 	name = document.getElementById('name').value;
 	var req2 = new XMLHttpRequest();

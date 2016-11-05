@@ -4,7 +4,45 @@ var path = require('path');
 
 var app = express();
 app.use(morgan('combined'));
-app.use("/", express.static(__dirname + '/ui'));
+
+app.use("/css", express.static(__dirname+'/ui/css'));
+app.use("/img", express.static(__dirname+'/ui/img'));
+app.use("/js", express.static(__dirname+'/ui/js'));
+app.use("/vendor", express.static(__dirname+'/ui/vendor'));
+
+app.get('/', function (req, res) {
+    res.send(homeTemplate(posts));
+});
+
+app.get('/index.html', function (req, res) {
+    res.send(homeTemplate(posts));
+});
+
+app.get('/about.html', function (req, res) {
+    res.sendFile(path.join(__dirname, 'ui', 'about.html'));
+});
+
+app.get('/contact.html', function (req, res) {
+   res.sendFile(path.join(__dirname, 'ui', 'contact.html'));
+});
+
+app.get('/main.js', function (req, res) {
+   res.sendFile(path.join(__dirname, 'ui', 'main.js'));
+});
+
+app.get('/counter', function(req, res){
+    /*Query the DB for counter value*/
+
+    /*Increment it and store it back in the DB*/
+    counter = counter + 1;
+
+    res.send(counter.toString());
+});
+
+app.get('/:postID', function (req, res) {
+  var postID = req.params.postID;
+  res.send(postTemplate(posts[postID]));
+});
 
 
 /* All the global variables */
@@ -74,8 +112,7 @@ var posts = {
                     <h2 class="section-heading">Reaching for the Stars</h2>
 
                     <p>As we got further and further away, it [the Earth] diminished in size. Finally it shrank to the size of a marble, the most beautiful you can imagine. That beautiful, warm, living object looked so fragile, so delicate, that if you touched it with a finger it would crumble and fall apart. Seeing this has to change a man.</p>
-        `
-    }}
+        `}}
 
 function homeTemplate(){
 
@@ -341,27 +378,7 @@ function postTemplate(data){
 
 
 
-app.get('/', function (req, res) {
-    res.send(homeTemplate(posts));
-});
 
-app.get('/index.html', function (req, res) {
-    res.send(homeTemplate(posts));
-});
-
-app.get('/counter', function(req, res){
-    /*Query the DB for counter value*/
-
-    /*Increment it and store it back in the DB*/
-    counter = counter + 1;
-
-    res.send(counter.toString());
-});
-
-app.get('/:postID', function (req, res) {
-  var postID = req.params.postID;
-  res.send(postTemplate(posts[postID]));
-});
 
 var port = 8080; // Use 8080 for local development because you might already have apache running on 80
 app.listen(8080, function () {

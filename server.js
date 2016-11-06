@@ -10,10 +10,17 @@ var Pool = require('pg').Pool;
 var config = {
   // user: 'postgres',
   // password: 'vishal',
-  user: 'flamefractal',
-  password: process.env.DB_PASSWORD,
-  database: 'flamefractal',
-  host: 'localhost',
+
+  // user: 'flamefractal',
+  // password: process.env.DB_PASSWORD,
+  // database: 'flamefractal',
+  // host: 'localhost',
+  // port: '5432',
+
+  user: 'tjsooxajhxixee',
+  password: '4E-4rvokYpmN-16-1U3FFBtvD4',
+  database: 'd4e5rlrk922mmk',
+  host: 'ec2-54-228-219-40.eu-west-1.compute.amazonaws.com',
   port: '5432',
 };
 

@@ -1,28 +1,50 @@
 var express = require('express');
 var morgan = require('morgan');
 var path = require('path');
-
 var app = express();
 app.use(morgan('combined'));
+app.set('etag', false);
 
+/* DB init stuff */
+var Pool = require('pg').Pool;
+var config = {
+  // user: 'postgres',
+  // password: 'vishal',
+  user: 'flamefractal',
+  password: process.env.DB_PASSWORD,
+  database: 'flamefractal',
+  host: 'localhost',
+  port: '5432',
+};
+
+/* All the global variables */
+var comments = [];
+var posts = [];
+var counter;
+var pool = new Pool(config);
+
+
+/* Define all the routes here*/
 app.use("/css", express.static(__dirname+'/ui/css'));
 app.use("/img", express.static(__dirname+'/ui/img'));
 app.use("/js", express.static(__dirname+'/ui/js'));
 app.use("/vendor", express.static(__dirname+'/ui/vendor'));
 
 app.get('/', function (req, res) {
-    res.send(homeTemplate(posts));
+    get_posts();
+    res.send(homeTemplate());
 });
 
 app.get('/index.html', function (req, res) {
-    res.send(homeTemplate(posts));
+    get_posts();
+    res.send(homeTemplate());
 });
 
-app.get('/about.html', function (req, res) {
+app.get('/about', function (req, res) {
     res.sendFile(path.join(__dirname, 'ui', 'about.html'));
 });
 
-app.get('/contact.html', function (req, res) {
+app.get('/contact', function (req, res) {
    res.sendFile(path.join(__dirname, 'ui', 'contact.html'));
 });
 
@@ -30,92 +52,66 @@ app.get('/main.js', function (req, res) {
    res.sendFile(path.join(__dirname, 'ui', 'main.js'));
 });
 
-app.get('/counter', function(req, res){
-    /*Query the DB for counter value*/
+app.get('/favicon.ico', function (req, res){
+    res.sendFile(path.join(__dirname, 'ui/img', 'favicon.ico'))
+});
 
+app.get('/counter', function(req, res){
     /*Increment it and store it back in the DB*/
     counter = counter + 1;
-
     res.send(counter.toString());
+    
+    pool.query('UPDATE hitcounter SET counter='+counter, function(err, results){
+        if (err){
+            return(err.toString());
+        } else {
+                console.log("loooooooooooooo counter ="+counter);
+            }
+    });
+
+});
+
+app.get('/submit-name/:postID', function(req, res){
+
+    var postID = req.params.postID;
+    var author = req.query.author;
+    var content = req.query.content;
+    
+    /* Write to database */
+    var query = "INSERT INTO comments (post_id, comment_author, comment_content) values ('"+postID+"','"+author+"','"+content+"');";
+    pool.query(query, function(err, results){
+        if (err){
+            return(err.toString());
+        } else {
+                console.log("loooooooo   query = "+query);
+            }
+    });
+
+    res.send('Succeeded');
 });
 
 app.get('/:postID', function (req, res) {
-  var postID = req.params.postID;
-  res.send(postTemplate(posts[postID]));
+    get_posts();
+    res.send(postTemplate(req.params.postID));
 });
 
 
-/* All the global variables */
-var counter = 0;
+function get_posts(){
+    pool.query('SELECT * from posts', function(err, results){
+        if (err){
+            return(err.toString());
+        } else {
+            if (results.rows.length === 0 ) {
+                return(err.toString());
+            } else {
+                posts = results.rows;
+            }
+        }
+    });
+}
 
-
-/* Feature functions */
-function get_comments(data){};
-
-var posts = {
-    '1' : {
-    	title: 'Man must explore, and this is exploration at its greatest',
-    	subtitle: 'Problems look mighty small from 150 miles up',
-        author: 'Vishal Gauba',
-        date: 'September 24, 2016',
-        postContent : `
-                    <p>Never in all their history have men been able truly to conceive of the world as one: a single sphere, a globe, having the qualities of a globe, a round earth in which all the directions eventually meet, in which there is no center because every point, or none, is center — an equal earth which all men occupy as equals. The airman's earth, if free men make it, will be truly round: a globe in practice, not in theory.</p>
-
-                    <p>Science cuts two ways, of course; its products can be used for both good and evil. But theres no turning back from science. The early warnings about technological dangers also come from science.</p>
-
-                    <p>What was most significant about the lunar voyage was not that man set foot on the Moon but that they set eye on the earth.</p>
-
-                    <p>A Chinese tale tells of some men sent to harm a young girl who, upon seeing her beauty, become her protectors rather than her violators. Thats how I felt seeing the Earth for the first time. I could not help but love and cherish her.</p>
-
-                    <p>For those who have seen the Earth from space, and for the hundreds and perhaps thousands more who will, the experience most certainly changes your perspective. The things that we share in our world are far more valuable than those which divide us.</p>
-
-                    <h2 class="section-heading">The Final Frontier</h2>
-
-                    <p>There can be no thought of finishing for ‘aiming for the stars.’ Both figuratively and literally, it is a task to occupy the generations. And no matter how much progress one makes, there is always the thrill of just beginning.</p>
-
-                    <p>There can be no thought of finishing for ‘aiming for the stars.’ Both figuratively and literally, it is a task to occupy the generations. And no matter how much progress one makes, there is always the thrill of just beginning.</p>
-
-                    <blockquote>The dreams of yesterday are the hopes of today and the reality of tomorrow. Science has not yet mastered prophecy. We predict too much for the next year and yet far too little for the next ten.</blockquote>
-
-                    <p>Spaceflights cannot be stopped. This is not the work of any one man or even a group of men. It is a historical process which mankind is carrying out in accordance with the natural laws of human development.</p>
-
-                    <h2 class="section-heading">Reaching for the Stars</h2>
-
-                    <p>As we got further and further away, it [the Earth] diminished in size. Finally it shrank to the size of a marble, the most beautiful you can imagine. That beautiful, warm, living object looked so fragile, so delicate, that if you touched it with a finger it would crumble and fall apart. Seeing this has to change a man.</p>
-        `},
-    '2' : {
-        title: 'Man must explore, and this is exploration at its greatest',
-        subtitle: 'Problems look mighty small from 150 miles up',
-        author: 'Vishal Gauba',
-        date: 'September 24, 2016',
-        postContent : `
-        <p>Never in all their history have men been able truly to conceive of the world as one: a single sphere, a globe, having the qualities of a globe, a round earth in which all the directions eventually meet, in which there is no center because every point, or none, is center — an equal earth which all men occupy as equals. The airman's earth, if free men make it, will be truly round: a globe in practice, not in theory.</p>
-
-                    <p>Science cuts two ways, of course; its products can be used for both good and evil. But theres no turning back from science. The early warnings about technological dangers also come from science.</p>
-
-                    <p>What was most significant about the lunar voyage was not that man set foot on the Moon but that they set eye on the earth.</p>
-
-                    <p>A Chinese tale tells of some men sent to harm a young girl who, upon seeing her beauty, become her protectors rather than her violators. Thats how I felt seeing the Earth for the first time. I could not help but love and cherish her.</p>
-
-                    <p>For those who have seen the Earth from space, and for the hundreds and perhaps thousands more who will, the experience most certainly changes your perspective. The things that we share in our world are far more valuable than those which divide us.</p>
-
-                    <h2 class="section-heading">The Final Frontier</h2>
-
-                    <p>There can be no thought of finishing for ‘aiming for the stars.’ Both figuratively and literally, it is a task to occupy the generations. And no matter how much progress one makes, there is always the thrill of just beginning.</p>
-
-                    <p>There can be no thought of finishing for ‘aiming for the stars.’ Both figuratively and literally, it is a task to occupy the generations. And no matter how much progress one makes, there is always the thrill of just beginning.</p>
-
-                    <blockquote>The dreams of yesterday are the hopes of today and the reality of tomorrow. Science has not yet mastered prophecy. We predict too much for the next year and yet far too little for the next ten.</blockquote>
-
-                    <p>Spaceflights cannot be stopped. This is not the work of any one man or even a group of men. It is a historical process which mankind is carrying out in accordance with the natural laws of human development.</p>
-
-                    <h2 class="section-heading">Reaching for the Stars</h2>
-
-                    <p>As we got further and further away, it [the Earth] diminished in size. Finally it shrank to the size of a marble, the most beautiful you can imagine. That beautiful, warm, living object looked so fragile, so delicate, that if you touched it with a finger it would crumble and fall apart. Seeing this has to change a man.</p>
-        `}}
 
 function homeTemplate(){
-
     var htmlTemplate = `
         <!DOCTYPE html>
         <html lang="en">
@@ -138,18 +134,18 @@ function homeTemplate(){
                             <span class="sr-only">Toggle navigation</span>
                             Menu <i class="fa fa-bars"></i>
                         </button>
-                        <a class="navbar-brand" href="">Vishal Gauba</a>
+                        <a class="navbar-brand" href="/">Vishal Gauba</a>
                     </div>
                     <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
                         <ul class="nav navbar-nav navbar-right">
                             <li>
-                                <a href="index.html">Home</a>
+                                <a href="/">Home</a>
                             </li>
                             <li>
-                                <a href="about.html">About</a>
+                                <a href="about">About</a>
                             </li>
                             <li>
-                                <a href="contact.html">Contact</a>
+                                <a href="contact">Contact</a>
                             </li>
                         </ul>
                     </div>
@@ -175,11 +171,11 @@ function homeTemplate(){
             `;
 
             
-            for (var postID in posts){
-                var title = posts[postID].title;
-                var subtitle = posts[postID].subtitle;
-                var author = posts[postID].author;
-                var date = posts[postID].date;
+            for (var postID=0; postID<posts.length; postID++){
+                var title = posts[postID].post_title;
+                var subtitle = posts[postID].post_subtitle;
+                var author = posts[postID].post_author;
+                var date = (posts[postID].post_date).toDateString();
 
                 htmlTemplate = htmlTemplate + `
 
@@ -208,7 +204,7 @@ function homeTemplate(){
                         <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
                             <ul class="list-inline text-center">
                                 <li>
-                                    <a href="#">
+                                    <a href="https://twitter.com/vishal_gauba">
                                         <span class="fa-stack fa-lg">
                                             <i class="fa fa-circle fa-stack-2x"></i>
                                             <i class="fa fa-twitter fa-stack-1x fa-inverse"></i>
@@ -216,7 +212,7 @@ function homeTemplate(){
                                     </a>
                                 </li>
                                 <li>
-                                    <a href="#">
+                                    <a href="https://www.facebook.com/vishal.gauba">
                                         <span class="fa-stack fa-lg">
                                             <i class="fa fa-circle fa-stack-2x"></i>
                                             <i class="fa fa-facebook fa-stack-1x fa-inverse"></i>
@@ -224,7 +220,7 @@ function homeTemplate(){
                                     </a>
                                 </li>
                                 <li>
-                                    <a href="#">
+                                    <a href="https://github.com/flamefractal">
                                         <span class="fa-stack fa-lg">
                                             <i class="fa fa-circle fa-stack-2x"></i>
                                             <i class="fa fa-github fa-stack-1x fa-inverse"></i>
@@ -245,15 +241,28 @@ function homeTemplate(){
             <script src="js/clean-blog.min.js"></script>
         </body>
         </html>`
-    return htmlTemplate;};
+    return htmlTemplate;
+};
 
 function postTemplate(data){
-    var title = data.title;
-    var subtitle = data.subtitle;
-    var author = data.author;
-    var date = data.date;
-    var postContent = data.postContent;
+    
+    var postID = data;
+    var title = posts[postID].post_title;
+    var subtitle = posts[postID].post_subtitle;
+    var author = posts[postID].post_author;
+    var date = (posts[postID].post_date).toDateString();
+    var postContent = posts[postID].post_content;
 
+
+     pool.query('SELECT * from comments WHERE post_id ='+postID, function(err, results){
+        if (err){
+            return(err.toString());
+        } else {
+            comments = results.rows;
+        }
+    });
+
+    console.log("lllllllllllll len = "+comments.length);
     var htmlTemplate = `
         <!DOCTYPE html>
         <html lang="en">
@@ -262,11 +271,13 @@ function postTemplate(data){
             <meta http-equiv="X-UA-Compatible" content="IE=edge">
             <meta name="viewport" content="width=device-width, initial-scale=1">
             <title>${title}</title>
+            <link href="css/post-comment.css" rel="stylesheet">
             <link href="vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
             <link href="css/clean-blog.min.css" rel="stylesheet">
             <link href="vendor/font-awesome/css/font-awesome.min.css" rel="stylesheet" type="text/css">
             <link href='https://fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic' rel='stylesheet' type='text/css'>
             <link href='https://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800' rel='stylesheet' type='text/css'>
+            <link href="css/post-comment.css" rel="stylesheet">
         </head>
         <body>
             <nav class="navbar navbar-default navbar-custom navbar-fixed-top">
@@ -276,18 +287,18 @@ function postTemplate(data){
                             <span class="sr-only">Toggle navigation</span>
                             Menu <i class="fa fa-bars"></i>
                         </button>
-                        <a class="navbar-brand" href="index.html">Home</a>
+                        <a class="navbar-brand" href="/">Vishal Gauba</a>
                     </div>
                     <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
                         <ul class="nav navbar-nav navbar-right">
                             <li>
-                                <a href="index.html">Home</a>
+                                <a href="/">Home</a>
                             </li>
                             <li>
-                                <a href="about.html">About</a>
+                                <a href="about">About</a>
                             </li>
                             <li>
-                                <a href="contact.html">Contact</a>
+                                <a href="contact">Contact</a>
                             </li>
                         </ul>
                     </div>
@@ -315,6 +326,78 @@ function postTemplate(data){
                     </div>
                 </div>
             </article>
+            <br><br>
+            <hr>
+
+            <!-- Comments of the Post -->
+            <!-- Fetch comment from DB -->
+            <div class="container">
+            `;
+
+            for (var i = 0; i < comments.length; i++) {
+              htmlTemplate = htmlTemplate +  `
+                <div class="row"> 
+                        <div class="col-md-8 col-md-offset-2">
+                            <div class="panel panel-white post panel-shadow">
+                                <div class="post-heading">
+                                    <div class="pull-left image">
+                                        <img src="http://bootdey.com/img/Content/user_`+(Math.floor(Math.random() * (3)) + 1)+`.jpg" class="img-circle avatar" alt="user profile image">
+                                    </div>
+                                    <div class="pull-left meta">
+                                        <div class="title h5">
+                                            <a href="#" id="author"><b>`+comments[i].comment_author+`</b></a>
+                                            commented.
+                                        </div>
+                                    </div> 
+                                    <div class="post-description"> 
+                                        <p>`+comments[i].comment_author+`</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                   </div>
+                   ` ;
+               }
+
+            htmlTemplate = htmlTemplate + `
+            </div>
+            <div class="container">
+                <!-- <div class="row"> <h2> Comments: </h2> </div> -->
+
+                <div class="row" style="visibility:hidden" id="new_comment">
+                    <!-- space for new comment -->
+                </div>
+            
+            </div>
+
+       <!-- Comment box -->
+            <div class="container">
+                <div class="row">
+                    <div class="col-md-8 col-md-offset-2">
+                        <div class="panel panel-white post panel-shadow">
+                            <div class="post-heading" style="height: 280px; min-height: 200px; overflow: hidden;">
+                                <div class="pull-left image">
+                                    <img src="http://bootdey.com/img/Content/user_1.jpg" class="img-circle avatar" alt="user profile image">
+                                </div>
+                                <div class="col-xs-8 meta">
+                                    <form>
+                                        <div class="form-group">
+                                            <input class="form-control input-md" id="commentAuthor" type="text" placeholder="Name">
+                                         </div>
+                                         <div class="form-group"> 
+                                           <textarea class="form-control" rows="5" id="commentContent" placeholder="Your comment here"></textarea>
+                                         </div>
+                                         <button type="button" id="submitComment" class="btn btn-default">Submit</button>
+                                    </form>
+                                </div> 
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+
+
+
             <hr>
             <footer>
                 <div class="container">
@@ -322,7 +405,7 @@ function postTemplate(data){
                         <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
                             <ul class="list-inline text-center">
                                 <li>
-                                    <a href="#">
+                                    <a href="https://twitter.com/vishal_gauba">
                                         <span class="fa-stack fa-lg">
                                             <i class="fa fa-circle fa-stack-2x"></i>
                                             <i class="fa fa-twitter fa-stack-1x fa-inverse"></i>
@@ -330,7 +413,7 @@ function postTemplate(data){
                                     </a>
                                 </li>
                                 <li>
-                                    <a href="#">
+                                    <a href="https://www.facebook.com/vishal.gauba">
                                         <span class="fa-stack fa-lg">
                                             <i class="fa fa-circle fa-stack-2x"></i>
                                             <i class="fa fa-facebook fa-stack-1x fa-inverse"></i>
@@ -338,7 +421,7 @@ function postTemplate(data){
                                     </a>
                                 </li>
                                 <li>
-                                    <a href="#">
+                                    <a href="https://github.com/flamefractal">
                                         <span class="fa-stack fa-lg">
                                             <i class="fa fa-circle fa-stack-2x"></i>
                                             <i class="fa fa-github fa-stack-1x fa-inverse"></i>
@@ -358,25 +441,24 @@ function postTemplate(data){
             <script src="js/contact_me.js"></script>
             <script src="js/clean-blog.min.js"></script>
         </body>
-        </html>`
-    return htmlTemplate;};
+        </html>`;
+        comments = [];
+    return htmlTemplate;
+};
 
 
-
-
-
-// var names = [];
-// app.get('/submit-name', function(req, res){
-// 	console.log(req);
-// 	console.log(req.query.name);
-//     var new_name = req.query.name;
-//     if (new_name==null)
-//         new_name="default";
-//     names.push(new_name);
-//     res.send(JSON.stringify(names));
-// });
-
-
+/*Query the DB for counter value*/
+    pool.query('SELECT counter from hitcounter', function(err, results){
+        if (err){
+            return(err.toString());
+        } else {
+            if (results.rows.length === 0 ) {
+                return(err.toString());
+            } else {
+                counter = results.rows[0].counter;
+            }
+        }
+    });
 
 
 

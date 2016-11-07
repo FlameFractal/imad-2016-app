@@ -8,24 +8,24 @@ var list = document.getElementById('list');
 var return_names;
 var name_list;
 
-// window.onload=function(){
-	//Request for the COUNTER API endpoint
-	var req = new XMLHttpRequest();	
-	req.onreadystatechange = function(){
-		if(req.readyState === XMLHttpRequest.DONE && req.status === 200) {
-			var count = req.responseText;
-			var counter = document.getElementById('counter');
-			counter.innerHTML = count.toString();
-		}
-	};
-	req.open("GET", "https://"+window.location.host+"/counter", true);
-	req.send(null);
 
-// }
+//Request for the COUNTER API endpoint
+var req = new XMLHttpRequest();	
+req.onreadystatechange = function(){
+	if(req.readyState === XMLHttpRequest.DONE && req.status === 200) {
+		var count = req.responseText;
+		var counter = document.getElementById('counter');
+		counter.innerHTML = count.toString();
+	}
+};
+req.open("GET", "https://"+window.location.host+"/counter", true);
+req.send(null);
 
+
+
+
+//Comment Submit endpoint
 submitComment.onclick = function(){
-	//Comment Submit endpoint
-
 	post_id = window.location.pathname;
 	commentAuthor = document.getElementById('commentAuthor').value;
 	commentContent = document.getElementById('commentContent').value;
@@ -80,3 +80,19 @@ submitComment.onclick = function(){
 	req2.send(null);		
 	}
 }
+
+
+
+
+
+
+
+
+
+$(document).ready(function(){
+	$(document).bind('keypress', function(e) {
+	    if(e.keyCode==13 && !e.shiftKey){
+	         $('#submitComment').trigger('click');
+     	}
+	});
+});

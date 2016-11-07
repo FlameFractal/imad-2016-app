@@ -178,7 +178,7 @@ function homeTemplate(){
             `;
 
             
-            for (var postID=5; postID<posts.length; postID--){
+            for (var postID=posts.length; postID>0; postID--){
                 var title = posts[postID].post_title;
                 var subtitle = posts[postID].post_subtitle;
                 var author = posts[postID].post_author;

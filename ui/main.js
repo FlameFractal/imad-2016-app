@@ -76,7 +76,7 @@ submitComment.onclick = function(){
 
 		}
 	};
-	req2.open("GET", "http://"+window.location.host+"/submit-name"+post_id+"?author="+encodeURI(commentAuthor)+"&content"+encodeURI(commentContent), true);
+	req2.open("GET", "https://"+window.location.host+"/submit-name"+post_id+"?author="+encodeURI(commentAuthor)+"&content"+encodeURI(commentContent), true);
 	req2.send(null);		
 	}
 }

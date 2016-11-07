@@ -357,7 +357,7 @@ function postTemplate(data){
                                         </div>
                                     </div> 
                                     <div class="post-description"> 
-                                        <p>`+comments[i].comment_author+`</p>
+                                        <p>`+comments[i].comment_content+`</p>
                                     </div>
                                 </div>
                             </div>

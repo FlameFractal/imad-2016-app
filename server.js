@@ -261,7 +261,7 @@ function homeTemplate(){
             <script src="vendor/jquery/jquery.min.js"></script>
             <script src="vendor/bootstrap/js/bootstrap.min.js"></script>
             <script src="js/clean-blog.min.js"></script>
-            <script src="main.js"></script>
+            <script src="../main.js"></script>
         </body>
         </html>`
     return htmlTemplate;

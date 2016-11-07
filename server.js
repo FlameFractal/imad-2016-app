@@ -240,12 +240,12 @@ function homeTemplate(){
                     </div>
                 </div>
             </footer>
-            <script src="main.js"></script>
             <script src="vendor/jquery/jquery.min.js"></script>
             <script src="vendor/bootstrap/js/bootstrap.min.js"></script>
             <script src="js/jqBootstrapValidation.js"></script>
             <script src="js/contact_me.js"></script>
             <script src="js/clean-blog.min.js"></script>
+            <script src="main.js"></script>
         </body>
         </html>`
     return htmlTemplate;
@@ -441,12 +441,12 @@ function postTemplate(data){
                     </div>
                 </div>
             </footer>
-            <script src="main.js"></script>
             <script src="vendor/jquery/jquery.min.js"></script>
             <script src="vendor/bootstrap/js/bootstrap.min.js"></script>
             <script src="js/jqBootstrapValidation.js"></script>
             <script src="js/contact_me.js"></script>
             <script src="js/clean-blog.min.js"></script>
+            <script src="main.js"></script>
         </body>
         </html>`;
         comments = [];

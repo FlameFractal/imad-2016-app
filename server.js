@@ -81,6 +81,19 @@ app.get('/counter', function(req, res){
 
 });
 
+app.get('/testDB/:postID', function(req, res){
+    get_comments();
+    var postID=req.params.postID;
+    var lol=" ";
+    // for (var i = 0; i < comments.length; i++) {
+    //      lol=lol+" "+comments[i].post_id;
+    //  }
+      for (var i = 0; i < comments.length; i++) {
+        lol = lol + "loooooool post id "+comments[i].post_id+" id = "+postID+" === "+(comments[i].post_id === postID) + " <br>\n ";
+      }
+    res.send(lol);
+});
+
 app.get('/submit-name/:postID', function(req, res){
 
     var postID = req.params.postID;
@@ -256,8 +269,6 @@ function homeTemplate(){
             </footer>
             <script src="vendor/jquery/jquery.min.js"></script>
             <script src="vendor/bootstrap/js/bootstrap.min.js"></script>
-            <script src="js/jqBootstrapValidation.js"></script>
-            <script src="js/contact_me.js"></script>
             <script src="js/clean-blog.min.js"></script>
             <script src="main.js"></script>
         </body>
@@ -357,6 +368,7 @@ function postTemplate(data){
             `;
 
             for (var i = 0; i < comments.length; i++) {
+                console.log("loooooool post id "+comments[i].post_id+" id = "+postID+" === "+comments[i].post_id === postID);
                 if (comments[i].post_id === postID){ 
                   htmlTemplate = htmlTemplate +  `
                     <div class="row"> 
@@ -364,7 +376,7 @@ function postTemplate(data){
                                 <div class="panel panel-white post panel-shadow">
                                     <div class="post-heading">
                                         <div class="pull-left image">
-                                            <img src="http://bootdey.com/img/Content/user_`+(Math.floor(Math.random() * (3)) + 1)+`.jpg" class="img-circle avatar" alt="user profile image">
+                                            <img src="//bootdey.com/img/Content/user_`+(Math.floor(Math.random() * (3)) + 1)+`.jpg" class="img-circle avatar" alt="user profile image">
                                         </div>
                                         <div class="pull-left meta">
                                             <div class="title h5">
@@ -381,6 +393,7 @@ function postTemplate(data){
                        </div>
                        ` ;
                    }
+               }
 
                 htmlTemplate = htmlTemplate + `
                 </div>
@@ -459,13 +472,10 @@ function postTemplate(data){
                 </footer>
                 <script src="vendor/jquery/jquery.min.js"></script>
                 <script src="vendor/bootstrap/js/bootstrap.min.js"></script>
-                <script src="js/jqBootstrapValidation.js"></script>
-                <script src="js/contact_me.js"></script>
                 <script src="js/clean-blog.min.js"></script>
                 <script src="main.js"></script>
             </body>
             </html>`;
-        }
     return htmlTemplate;
 };
 

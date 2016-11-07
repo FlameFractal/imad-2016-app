@@ -8,7 +8,7 @@ var list = document.getElementById('list');
 var return_names;
 var name_list;
 
-window.onload=function(){
+// window.onload=function(){
 	//Request for the COUNTER API endpoint
 	var req = new XMLHttpRequest();	
 	req.onreadystatechange = function(){
@@ -21,7 +21,7 @@ window.onload=function(){
 	req.open("GET", "https://"+window.location.host+"/counter", true);
 	req.send(null);
 
-}
+// }
 
 submitComment.onclick = function(){
 	//Comment Submit endpoint

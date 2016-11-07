@@ -87,7 +87,7 @@ if (submitComment) {
 
 			}
 		};
-		req2.open("GET", "https://"+window.location.host+"/submit-name"+post_id+"?author="+(commentAuthor)+"&content="+(commentContent), true);
+		req2.open("GET", "https://"+window.location.host+"/submit-comment"+post_id+"?author="+(commentAuthor)+"&content="+(commentContent), true);
 		req2.send(null);		
 		}
 	}

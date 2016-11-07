@@ -3,26 +3,24 @@ var morgan = require('morgan');
 var path = require('path');
 var app = express();
 app.use(morgan('combined'));
-app.set('etag', false);
+
 
 /* DB init stuff */
 var Pool = require('pg').Pool;
 var config = {
-//   user: 'postgres',
-//   password: 'vishal',
-
-//   user: 'flamefractal',
-//   password: process.env.DB_PASSWORD,
-//   database: 'flamefractal',
-//   host: 'localhost',
-//   port: '5432',
-
+  // user: 'postgres',
+  // password: 'vishal',
+  // user: 'flamefractal',
+  // password: process.env.DB_PASSWORD,
+  // database: 'flamefractal',
+  // host: 'localhost',
   user: 'tjsooxajhxixee',
   password: '4E-4rvokYpmN-16-1U3FFBtvD4',
   database: 'd4e5rlrk922mmk',
   host: 'ec2-54-228-219-40.eu-west-1.compute.amazonaws.com',
   port: '5432',
 };
+
 
 /* All the global variables */
 var comments = [];
@@ -32,6 +30,7 @@ var pool = new Pool(config);
 
 get_posts();
 get_comments();
+
 
 
 /* Define all the routes here*/
@@ -75,26 +74,14 @@ app.get('/counter', function(req, res){
         if (err){
             return(err.toString());
         } else {
-                console.log("loooooooooooooo counter ="+counter);
+                console.log("");
             }
     });
 
 });
 
-app.get('/testDB/:postID', function(req, res){
-    get_comments();
-    var postID=req.params.postID;
-    var lol=" ";
-    // for (var i = 0; i < comments.length; i++) {
-    //      lol=lol+" "+comments[i].post_id;
-    //  }
-      for (var i = 0; i < comments.length; i++) {
-        lol = lol + "loooooool post id "+comments[i].post_id+" id = "+postID+" === "+(comments[i].post_id === postID) + " <br>\n ";
-      }
-    res.send(lol);
-});
 
-app.get('/submit-name/:postID', function(req, res){
+app.get('/submit-comment/:postID', function(req, res){
 
     var postID = req.params.postID;
     var author = req.query.author;
@@ -106,14 +93,15 @@ app.get('/submit-name/:postID', function(req, res){
         if (err){
             return(err.toString());
         } else {
-                console.log("loooooooo   query = "+query);
+                console.log("");
             }
     });
 
     res.send('Succeeded.<br> author='+author+' <br>content='+content);
 });
 
-app.get('/:postID', function (req, res) {
+
+app.get('/posts/:postID', function (req, res) {
     get_posts();
     get_comments();
     res.send(postTemplate(req.params.postID));
@@ -214,7 +202,7 @@ function homeTemplate(){
                 htmlTemplate = htmlTemplate + `
 
                  <div class="post-preview">
-                            <a href="${postID}">
+                            <a href="posts/${postID}">
                                 <h2 class="post-title">
                                     ${title}
                                 </h2>
@@ -285,17 +273,6 @@ function postTemplate(data){
     var date = (posts[postID].post_date).toDateString();
     var postContent = posts[postID].post_content;
 
-
-
-    // pool.query('SELECT * from comments WHERE post_id ='+postID+' ORDER BY comment_id', function(err, results){
-    //     if (err){
-    //         return(err.toString());
-    //     } else {
-    //         comments = results.rows;
-    //     }
-    // });
-
-    console.log("lllllllllllll len = "+comments.length);
     var htmlTemplate = `
         <!DOCTYPE html>
         <html lang="en">
@@ -304,13 +281,12 @@ function postTemplate(data){
             <meta http-equiv="X-UA-Compatible" content="IE=edge">
             <meta name="viewport" content="width=device-width, initial-scale=1">
             <title>${title}</title>
-            <link href="css/post-comment.css" rel="stylesheet">
-            <link href="vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
-            <link href="css/clean-blog.min.css" rel="stylesheet">
-            <link href="vendor/font-awesome/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+            <link href="../css/post-comment.css" rel="stylesheet">
+            <link href="../vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+            <link href="../css/clean-blog.min.css" rel="stylesheet">
+            <link href="../vendor/font-awesome/css/font-awesome.min.css" rel="stylesheet" type="text/css">
             <link href='https://fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic' rel='stylesheet' type='text/css'>
             <link href='https://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800' rel='stylesheet' type='text/css'>
-            <link href="css/post-comment.css" rel="stylesheet">
         </head>
         <body>
             <nav class="navbar navbar-default navbar-custom navbar-fixed-top">
@@ -337,7 +313,7 @@ function postTemplate(data){
                     </div>
                 </div>
             </nav>
-            <header class="intro-header" style="background-image: url('img/post-bg.jpg')">
+            <header class="intro-header" style="background-image: url('../img/post-bg.jpg')">
                 <div class="container">
                     <div class="row">
                         <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
@@ -368,15 +344,14 @@ function postTemplate(data){
             `;
 
             for (var i = 0; i < comments.length; i++) {
-                console.log("loooooool post id "+comments[i].post_id+" id = "+postID+" === "+comments[i].post_id === postID);
-                if (comments[i].post_id === postID){ 
+                if (comments[i].post_id === parseInt(postID)){ 
                   htmlTemplate = htmlTemplate +  `
                     <div class="row"> 
                             <div class="col-md-8 col-md-offset-2">
                                 <div class="panel panel-white post panel-shadow">
                                     <div class="post-heading">
                                         <div class="pull-left image">
-                                            <img src="//bootdey.com/img/Content/user_`+(Math.floor(Math.random() * (3)) + 1)+`.jpg" class="img-circle avatar" alt="user profile image">
+                                            <img src="http://bootdey.com/img/Content/user_`+(Math.floor(Math.random() * (3)) + 1)+`.jpg" class="img-circle avatar" alt="user profile image">
                                         </div>
                                         <div class="pull-left meta">
                                             <div class="title h5">
@@ -470,10 +445,10 @@ function postTemplate(data){
                         </div>
                     </div>
                 </footer>
-                <script src="vendor/jquery/jquery.min.js"></script>
-                <script src="vendor/bootstrap/js/bootstrap.min.js"></script>
-                <script src="js/clean-blog.min.js"></script>
-                <script src="main.js"></script>
+                <script src="../vendor/jquery/jquery.min.js"></script>
+                <script src="../vendor/bootstrap/js/bootstrap.min.js"></script>
+                <script src="../js/clean-blog.min.js"></script>
+                <script src="../main.js"></script>
             </body>
             </html>`;
     return htmlTemplate;

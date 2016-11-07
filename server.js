@@ -8,14 +8,14 @@ app.set('etag', false);
 /* DB init stuff */
 var Pool = require('pg').Pool;
 var config = {
-  // user: 'postgres',
-  // password: 'vishal',
+//   user: 'postgres',
+//   password: 'vishal',
 
-  // user: 'flamefractal',
-  // password: process.env.DB_PASSWORD,
-  // database: 'flamefractal',
-  // host: 'localhost',
-  // port: '5432',
+//   user: 'flamefractal',
+//   password: process.env.DB_PASSWORD,
+//   database: 'flamefractal',
+//   host: 'localhost',
+//   port: '5432',
 
   user: 'tjsooxajhxixee',
   password: '4E-4rvokYpmN-16-1U3FFBtvD4',
@@ -29,6 +29,9 @@ var comments = [];
 var posts = [];
 var counter;
 var pool = new Pool(config);
+
+get_posts();
+get_comments();
 
 
 /* Define all the routes here*/
@@ -99,9 +102,20 @@ app.get('/submit-name/:postID', function(req, res){
 
 app.get('/:postID', function (req, res) {
     get_posts();
+    get_comments();
     res.send(postTemplate(req.params.postID));
 });
 
+
+function get_comments(){
+     pool.query('SELECT * from comments', function(err, results){
+        if (err){
+            return(err.toString());
+        } else {
+                comments = results.rows;
+        }
+    });
+}
 
 function get_posts(){
     pool.query('SELECT * from posts ORDER BY post_id DESC', function(err, results){
@@ -261,13 +275,14 @@ function postTemplate(data){
     var postContent = posts[postID].post_content;
 
 
-     pool.query('SELECT * from comments WHERE post_id ='+postID+' ORDER BY comment_id', function(err, results){
-        if (err){
-            return(err.toString());
-        } else {
-            comments = results.rows;
-        }
-    });
+
+    // pool.query('SELECT * from comments WHERE post_id ='+postID+' ORDER BY comment_id', function(err, results){
+    //     if (err){
+    //         return(err.toString());
+    //     } else {
+    //         comments = results.rows;
+    //     }
+    // });
 
     console.log("lllllllllllll len = "+comments.length);
     var htmlTemplate = `
@@ -342,114 +357,115 @@ function postTemplate(data){
             `;
 
             for (var i = 0; i < comments.length; i++) {
-              htmlTemplate = htmlTemplate +  `
-                <div class="row"> 
-                        <div class="col-md-8 col-md-offset-2">
-                            <div class="panel panel-white post panel-shadow">
-                                <div class="post-heading">
-                                    <div class="pull-left image">
-                                        <img src="http://bootdey.com/img/Content/user_`+(Math.floor(Math.random() * (3)) + 1)+`.jpg" class="img-circle avatar" alt="user profile image">
-                                    </div>
-                                    <div class="pull-left meta">
-                                        <div class="title h5">
-                                            <a href="#" id="author"><b>`+comments[i].comment_author+`</b></a>
-                                            commented.
+                if (comments[i].post_id === postID){ 
+                  htmlTemplate = htmlTemplate +  `
+                    <div class="row"> 
+                            <div class="col-md-8 col-md-offset-2">
+                                <div class="panel panel-white post panel-shadow">
+                                    <div class="post-heading">
+                                        <div class="pull-left image">
+                                            <img src="http://bootdey.com/img/Content/user_`+(Math.floor(Math.random() * (3)) + 1)+`.jpg" class="img-circle avatar" alt="user profile image">
                                         </div>
-                                    </div> 
-                                    <div class="post-description"> 
-                                        <p>`+comments[i].comment_content+`</p>
+                                        <div class="pull-left meta">
+                                            <div class="title h5">
+                                                <a href="#" id="author"><b>`+comments[i].comment_author+`</b></a>
+                                                commented.
+                                            </div>
+                                        </div> 
+                                        <div class="post-description"> 
+                                            <p>`+comments[i].comment_content+`</p>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
-                        </div>
-                   </div>
-                   ` ;
-               }
+                       </div>
+                       ` ;
+                   }
 
-            htmlTemplate = htmlTemplate + `
-            </div>
-            <div class="container">
-                <!-- <div class="row"> <h2> Comments: </h2> </div> -->
-
-                <div class="row" style="visibility:hidden" id="new_comment">
-                    <!-- space for new comment -->
+                htmlTemplate = htmlTemplate + `
                 </div>
-            
-            </div>
+                <div class="container">
+                    <!-- <div class="row"> <h2> Comments: </h2> </div> -->
 
-       <!-- Comment box -->
-            <div class="container">
-                <div class="row">
-                    <div class="col-md-8 col-md-offset-2">
-                        <div class="panel panel-white post panel-shadow">
-                            <div class="post-heading" style="height: 280px; min-height: 200px; overflow: hidden;">
-                                <div class="pull-left image">
-                                    <img src="http://bootdey.com/img/Content/user_1.jpg" class="img-circle avatar" alt="user profile image">
-                                </div>
-                                <div class="col-xs-8 meta">
-                                    <form>
-                                        <div class="form-group">
-                                            <input class="form-control input-md" id="commentAuthor" type="text" placeholder="Name">
-                                         </div>
-                                         <div class="form-group"> 
-                                           <textarea class="form-control" rows="5" id="commentContent" placeholder="Your comment here"></textarea>
-                                         </div>
-                                         <button type="button" id="submitComment" class="btn btn-default">Submit</button>
-                                    </form>
-                                </div> 
-                            </div>
-                        </div>
+                    <div class="row" style="visibility:hidden" id="new_comment">
+                        <!-- space for new comment -->
                     </div>
+                
                 </div>
 
-
-
-
-            <hr>
-            <footer>
+           <!-- Comment box -->
                 <div class="container">
                     <div class="row">
-                        <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
-                            <ul class="list-inline text-center">
-                                <li>
-                                    <a href="https://twitter.com/vishal_gauba">
-                                        <span class="fa-stack fa-lg">
-                                            <i class="fa fa-circle fa-stack-2x"></i>
-                                            <i class="fa fa-twitter fa-stack-1x fa-inverse"></i>
-                                        </span>
-                                    </a>
-                                </li>
-                                <li>
-                                    <a href="https://www.facebook.com/vishal.gauba">
-                                        <span class="fa-stack fa-lg">
-                                            <i class="fa fa-circle fa-stack-2x"></i>
-                                            <i class="fa fa-facebook fa-stack-1x fa-inverse"></i>
-                                        </span>
-                                    </a>
-                                </li>
-                                <li>
-                                    <a href="https://github.com/flamefractal">
-                                        <span class="fa-stack fa-lg">
-                                            <i class="fa fa-circle fa-stack-2x"></i>
-                                            <i class="fa fa-github fa-stack-1x fa-inverse"></i>
-                                        </span>
-                                    </a>
-                                </li>
-                            </ul>
-                            <p class="copyright text-muted">This website has been visited <b><span id="counter">2016</span></b> times since inception.</p>
+                        <div class="col-md-8 col-md-offset-2">
+                            <div class="panel panel-white post panel-shadow">
+                                <div class="post-heading" style="height: 280px; min-height: 200px; overflow: hidden;">
+                                    <div class="pull-left image">
+                                        <img src="http://bootdey.com/img/Content/user_1.jpg" class="img-circle avatar" alt="user profile image">
+                                    </div>
+                                    <div class="col-xs-8 meta">
+                                        <form>
+                                            <div class="form-group">
+                                                <input class="form-control input-md" id="commentAuthor" type="text" placeholder="Name">
+                                             </div>
+                                             <div class="form-group"> 
+                                               <textarea class="form-control" rows="5" id="commentContent" placeholder="Your comment here"></textarea>
+                                             </div>
+                                             <button type="button" id="submitComment" class="btn btn-default">Submit</button>
+                                        </form>
+                                    </div> 
+                                </div>
+                            </div>
                         </div>
                     </div>
-                </div>
-            </footer>
-            <script src="vendor/jquery/jquery.min.js"></script>
-            <script src="vendor/bootstrap/js/bootstrap.min.js"></script>
-            <script src="js/jqBootstrapValidation.js"></script>
-            <script src="js/contact_me.js"></script>
-            <script src="js/clean-blog.min.js"></script>
-            <script src="main.js"></script>
-        </body>
-        </html>`;
-        comments = [];
+
+
+
+
+                <hr>
+                <footer>
+                    <div class="container">
+                        <div class="row">
+                            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                                <ul class="list-inline text-center">
+                                    <li>
+                                        <a href="https://twitter.com/vishal_gauba">
+                                            <span class="fa-stack fa-lg">
+                                                <i class="fa fa-circle fa-stack-2x"></i>
+                                                <i class="fa fa-twitter fa-stack-1x fa-inverse"></i>
+                                            </span>
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a href="https://www.facebook.com/vishal.gauba">
+                                            <span class="fa-stack fa-lg">
+                                                <i class="fa fa-circle fa-stack-2x"></i>
+                                                <i class="fa fa-facebook fa-stack-1x fa-inverse"></i>
+                                            </span>
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a href="https://github.com/flamefractal">
+                                            <span class="fa-stack fa-lg">
+                                                <i class="fa fa-circle fa-stack-2x"></i>
+                                                <i class="fa fa-github fa-stack-1x fa-inverse"></i>
+                                            </span>
+                                        </a>
+                                    </li>
+                                </ul>
+                                <p class="copyright text-muted">This website has been visited <b><span id="counter">2016</span></b> times since inception.</p>
+                            </div>
+                        </div>
+                    </div>
+                </footer>
+                <script src="vendor/jquery/jquery.min.js"></script>
+                <script src="vendor/bootstrap/js/bootstrap.min.js"></script>
+                <script src="js/jqBootstrapValidation.js"></script>
+                <script src="js/contact_me.js"></script>
+                <script src="js/clean-blog.min.js"></script>
+                <script src="main.js"></script>
+            </body>
+            </html>`;
+        }
     return htmlTemplate;
 };
 

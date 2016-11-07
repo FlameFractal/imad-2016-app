@@ -94,7 +94,7 @@ app.get('/submit-name/:postID', function(req, res){
             }
     });
 
-    res.send('Succeeded');
+    res.send('Succeeded.<br> author='+author+' <br>content='+content);
 });
 
 app.get('/:postID', function (req, res) {
@@ -104,7 +104,7 @@ app.get('/:postID', function (req, res) {
 
 
 function get_posts(){
-    pool.query('SELECT * from posts', function(err, results){
+    pool.query('SELECT * from posts ORDER BY post_id DESC', function(err, results){
         if (err){
             return(err.toString());
         } else {
@@ -261,7 +261,7 @@ function postTemplate(data){
     var postContent = posts[postID].post_content;
 
 
-     pool.query('SELECT * from comments WHERE post_id ='+postID, function(err, results){
+     pool.query('SELECT * from comments WHERE post_id ='+postID+' ORDER BY comment_id', function(err, results){
         if (err){
             return(err.toString());
         } else {

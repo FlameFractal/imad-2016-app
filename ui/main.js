@@ -1,9 +1,8 @@
 var submitComment = document.getElementById('submitComment');
-var commentAuthor = document.getElementById('commentAuthor');
-var commentContent = document.getElementById('commentContent');
-var list = document.getElementById('list');
-var post_id = window.location.pathname;
-
+var counter = document.getElementById('counter');
+var post_id = window.location.pathname.replace('/posts/','');
+var commentAuthor = document.getElementById('commentAuthor').value;
+var commentContent = document.getElementById('commentContent').value;
 
 
 //Request for the COUNTER API endpoint
@@ -36,10 +35,9 @@ if (submitComment) {
 
 //Comment Submit endpoint
 if (submitComment) {
-	submitComment.onclick = function(){
-		post_id = window.location.pathname;
-		commentAuthor = document.getElementById('commentAuthor').value;
-		commentContent = document.getElementById('commentContent').value;
+		submitComment.onclick = function(){
+			commentAuthor = document.getElementById('commentAuthor').value;
+			commentContent = document.getElementById('commentContent').value;
 
 		if (commentAuthor === '' || commentContent === '') {
 			if (commentAuthor === '') {
@@ -48,7 +46,6 @@ if (submitComment) {
 			if (commentContent === '') {
 				$("#commentContent").attr("placeholder", "Comment is required !");
 			}
-
 		} else {
 		var req2 = new XMLHttpRequest();
 		req2.onreadystatechange = function(){
@@ -87,7 +84,7 @@ if (submitComment) {
 
 			}
 		};
-		req2.open("GET", "https://"+window.location.host+"/submit-comment"+post_id+"?author="+(commentAuthor)+"&content="+(commentContent), true);
+		req2.open("GET", "http://"+window.location.host+"/submit-comment/"+post_id+"?author="+(commentAuthor)+"&content="+(commentContent), true);
 		req2.send(null);		
 		}
 	}

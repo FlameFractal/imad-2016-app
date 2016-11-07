@@ -8,17 +8,17 @@ app.use(morgan('combined'));
 /* DB init stuff */
 var Pool = require('pg').Pool;
 var config = {
-  user: 'postgres',
-  password: 'vishal',
+  // user: 'postgres',
+  // password: 'vishal',
   // user: 'flamefractal',
   // password: process.env.DB_PASSWORD,
-  database: 'flamefractal',
-  host: 'localhost',
-  // user: 'tjsooxajhxixee',
-  // password: '4E-4rvokYpmN-16-1U3FFBtvD4',
-  // database: 'd4e5rlrk922mmk',
-  // host: 'ec2-54-228-219-40.eu-west-1.compute.amazonaws.com',
-  // port: '5432',
+  // database: 'flamefractal',
+  // host: 'localhost',
+  user: 'tjsooxajhxixee',
+  password: '4E-4rvokYpmN-16-1U3FFBtvD4',
+  database: 'd4e5rlrk922mmk',
+  host: 'ec2-54-228-219-40.eu-west-1.compute.amazonaws.com',
+  port: '5432',
 };
 
 
@@ -44,9 +44,12 @@ app.get('/', function (req, res) {
     res.send(homeTemplate());
 });
 
+app.get('/posts', function (req, res) {
+    res.redirect('/');
+});
+
 app.get('/index.html', function (req, res) {
-    get_posts();
-    res.send(homeTemplate());
+    res.redirect('/');
 });
 
 app.get('/about', function (req, res) {
@@ -337,12 +340,54 @@ function postTemplate(data){
             </article>
             <br><br>
             <hr>
-
-            <!-- Comments of the Post -->
-            <!-- Fetch comment from DB -->
-            <div class="container">
             `;
 
+            if (postID == 0) {
+            htmlTemplate = htmlTemplate +   
+                ` 
+                <div class="container">
+                    <ul class="pager">
+                        <li class="previous">
+                            <a href="${parseInt(postID)+1}">&larr; Newer Post </a>
+                        </li>
+                        </ul>
+                </div>
+                `;
+            }
+            else if (postID == posts.length - 1) {
+                htmlTemplate = htmlTemplate +
+                `
+                <div class="container">
+                    <ul class="pager">
+                        <li class="next">
+                            <a href="${parseInt(postID)-1}">Older Post &rarr;</a>
+                        </li>
+                    </ul>
+                </div>    
+                `;
+            }
+            else{
+                htmlTemplate = htmlTemplate +
+                `
+                <div class="container">
+                    <ul class="pager">
+                        <li class="previous">
+                            <a href="${parseInt(postID)+1}">&larr; Newer Post </a>
+                        </li>
+                        <li class="next">
+                            <a href="${parseInt(postID)-1}">Older Post &rarr;</a>
+                        </li>
+                    </ul>
+                </div> 
+                `;
+            }
+            <!-- Comments of the Post -->
+            <!-- Fetch comment from DB -->
+
+            htmlTemplate = htmlTemplate +
+            `
+                <div class="container">
+            `;
             for (var i = 0; i < comments.length; i++) {
                 if (comments[i].post_id === parseInt(postID)){ 
                   htmlTemplate = htmlTemplate +  `

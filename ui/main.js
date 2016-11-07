@@ -1,8 +1,8 @@
 var submitComment = document.getElementById('submitComment');
 var counter = document.getElementById('counter');
 var post_id = window.location.pathname.replace('/posts/','');
-var commentAuthor = document.getElementById('commentAuthor').value;
-var commentContent = document.getElementById('commentContent').value;
+var commentAuthor;
+var commentContent;
 
 
 //Request for the COUNTER API endpoint

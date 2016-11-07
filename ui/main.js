@@ -18,7 +18,7 @@ window.onload=function(){
 			counter.innerHTML = count.toString();
 		}
 	};
-	req.open("GET", "http://"+window.location.host+"/counter", true);
+	req.open("GET", "https://"+window.location.host+"/counter", true);
 	req.send(null);
 
 }

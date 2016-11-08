@@ -8,16 +8,10 @@ app.use(morgan('combined'));
 /* DB init stuff */
 var Pool = require('pg').Pool;
 var config = {
-  // user: 'postgres',
-  // password: 'vishal',
-  // user: 'flamefractal',
-  // password: process.env.DB_PASSWORD,
-  // database: 'flamefractal',
-  // host: 'localhost',
-  user: 'tjsooxajhxixee',
-  password: '4E-4rvokYpmN-16-1U3FFBtvD4',
-  database: 'd4e5rlrk922mmk',
-  host: 'ec2-54-228-219-40.eu-west-1.compute.amazonaws.com',
+  user: process.env.IMADUSER,
+  password: process.env.IMADPASSWORD,
+  database: process.env.IMADDB,
+  host: process.env.IMADHOST,
   port: '5432',
 };
 
@@ -148,8 +142,8 @@ function homeTemplate(){
             <link href="vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
             <link href="css/clean-blog.min.css" rel="stylesheet">
             <link href="vendor/font-awesome/css/font-awesome.min.css" rel="stylesheet" type="text/css">
-            <link href='https://fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic' rel='stylesheet' type='text/css'>
-            <link href='https://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800' rel='stylesheet' type='text/css'>
+            <link href='//fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic' rel='stylesheet' type='text/css'>
+            <link href='//fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800' rel='stylesheet' type='text/css'>
         </head>
         <body>
             <nav class="navbar navbar-default navbar-custom navbar-fixed-top">
@@ -167,10 +161,10 @@ function homeTemplate(){
                                 <a href="/">Home</a>
                             </li>
                             <li>
-                                <a href="about">About</a>
+                                <a href="/about">About</a>
                             </li>
                             <li>
-                                <a href="contact">Contact</a>
+                                <a href="/contact">Contact</a>
                             </li>
                         </ul>
                     </div>
@@ -288,8 +282,8 @@ function postTemplate(data){
             <link href="../vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
             <link href="../css/clean-blog.min.css" rel="stylesheet">
             <link href="../vendor/font-awesome/css/font-awesome.min.css" rel="stylesheet" type="text/css">
-            <link href='https://fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic' rel='stylesheet' type='text/css'>
-            <link href='https://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800' rel='stylesheet' type='text/css'>
+            <link href='//fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic' rel='stylesheet' type='text/css'>
+            <link href='//fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800' rel='stylesheet' type='text/css'>
         </head>
         <body>
             <nav class="navbar navbar-default navbar-custom navbar-fixed-top">
@@ -307,10 +301,10 @@ function postTemplate(data){
                                 <a href="/">Home</a>
                             </li>
                             <li>
-                                <a href="about">About</a>
+                                <a href="/about">About</a>
                             </li>
                             <li>
-                                <a href="contact">Contact</a>
+                                <a href="/contact">Contact</a>
                             </li>
                         </ul>
                     </div>
@@ -516,5 +510,6 @@ function postTemplate(data){
 
 var port = process.env.PORT || 8080;  // Use 8080 for local development because you might already have apache running on 80
 app.listen(port, function () {
+        console.log(`DB details, user : `+config.user);
   console.log(`IMAD course app listening on port ${port}!`);
 });

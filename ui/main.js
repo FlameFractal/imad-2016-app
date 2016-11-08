@@ -15,31 +15,45 @@ if (counter) {
 			counter.innerHTML = count.toString();
 		}
 	};
-	req.open("GET", "https://"+window.location.host+"/counter", true);
+	req.open("GET", window.location.protocol+"//"+window.location.host+"/counter", true);
 	req.send(null);
-}
-
-
-if (submitComment) {
-	$(document).ready(function(){	
-			$(document).bind('keypress', function(e) {
-			    if(e.keyCode==13 && !e.shiftKey){
-			         $('#submitComment').trigger('click');
-		     	}
-			});
-	});
-
 }
 
 
 
 //Comment Submit endpoint
 if (submitComment) {
+
+		$(document).ready(function(){	
+			$(document).bind('keypress', function(e) {
+			    if(e.keyCode==13 && !e.shiftKey){
+			    	e.preventDefault();
+			    				commentAuthor = document.getElementById('commentAuthor').value;
+								commentContent = document.getElementById('commentContent').value;
+
+			    	if (commentAuthor === '' || commentContent === '') {
+						if (commentAuthor === '') {
+							$("#commentAuthor").attr("placeholder", "Name is required !");
+						}
+						if (commentContent === '') {
+							$("#commentContent").attr("placeholder", "Comment is required !");
+						}
+					} else {
+			         $('#submitComment').trigger('click');
+				     		}
+				     	}
+					});
+			});
+
+
+
+
 		submitComment.onclick = function(){
 			commentAuthor = document.getElementById('commentAuthor').value;
 			commentContent = document.getElementById('commentContent').value;
 
 		if (commentAuthor === '' || commentContent === '') {
+			e.preventDefault();
 			if (commentAuthor === '') {
 				$("#commentAuthor").attr("placeholder", "Name is required !");
 			}
@@ -84,7 +98,7 @@ if (submitComment) {
 
 			}
 		};
-		req2.open("GET", "http://"+window.location.host+"/submit-comment/"+post_id+"?author="+(commentAuthor)+"&content="+(commentContent), true);
+		req2.open("GET", window.location.protocol+"//"+window.location.host+"/submit-comment/"+post_id+"?author="+(commentAuthor)+"&content="+(commentContent), true);
 		req2.send(null);		
 		}
 	}

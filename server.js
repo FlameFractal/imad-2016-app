@@ -1,9 +1,18 @@
 var express = require('express');
 var morgan = require('morgan');
 var path = require('path');
+var crypto = require('crypto');
+var bodyParser = require('body-parser');
+var session = require('express-session');
+
+
 var app = express();
 app.use(morgan('combined'));
-
+app.use(bodyParser.json());
+app.use(session({
+    secret: 'dfkjsdlfnkjf',
+    cookie: { maxAge: 1000 * 60 * 60 * 24 * 30}
+}));
 
 /* DB init stuff */
 var Pool = require('pg').Pool;
@@ -58,6 +67,10 @@ app.get('/main.js', function (req, res) {
    res.sendFile(path.join(__dirname, 'ui', 'main.js'));
 });
 
+app.get('/article.js', function (req, res) {
+   res.sendFile(path.join(__dirname, 'ui', 'article.js'));
+});
+
 app.get('/favicon.ico', function (req, res){
     res.sendFile(path.join(__dirname, 'ui/img', 'favicon.ico'))
 });
@@ -79,22 +92,23 @@ app.get('/counter', function(req, res){
 
 
 app.get('/submit-comment/:postID', function(req, res){
+    if (req.session && req.session.auth && req.session.auth.userId) {
+        var postID = req.params.postID;
+        var author = req.query.author;
+        var content = req.query.content;
+        
+        /* Write to database */
+        var query = "INSERT INTO comments (post_id, comment_author, comment_content) values ('"+postID+"','"+author+"','"+content+"');";
+        pool.query(query, function(err, results){
+            if (err){
+                return(err.toString());
+            } else {
+                    console.log("");
+                }
+        });
 
-    var postID = req.params.postID;
-    var author = req.query.author;
-    var content = req.query.content;
-    
-    /* Write to database */
-    var query = "INSERT INTO comments (post_id, comment_author, comment_content) values ('"+postID+"','"+author+"','"+content+"');";
-    pool.query(query, function(err, results){
-        if (err){
-            return(err.toString());
-        } else {
-                console.log("");
-            }
-    });
-
-    res.send('Succeeded.<br> author='+author+' <br>content='+content);
+        res.send('Succeeded.<br> author='+author+' <br>content='+content);
+    }
 });
 
 
@@ -104,9 +118,90 @@ app.get('/posts/:postID', function (req, res) {
     res.send(postTemplate(req.params.postID));
 });
 
+function hash (input, salt) {
+    // How do we create a hash?
+    var hashed = crypto.pbkdf2Sync(input, salt, 8000, 512, 'sha512');
+    return ["pbkdf2", "8000", salt, hashed.toString('hex')].join('$');
+}
 
+app.post('/create-user', function (req, res) {
+   // username, password
+   // {"username": "tanmai", "password": "password"}
+   // JSON
+   var username = req.body.username;
+   var password = req.body.password;
+   var salt = crypto.randomBytes(128).toString('hex');
+   var dbString = hash(password, salt);
+   pool.query('INSERT INTO "user" (username, password) VALUES ($1, $2)', [username, dbString], function (err, result) {
+      if (err) {
+          res.status(500).send(err.toString());
+      } else {
+          res.send('User successfully created: ' + username);
+      }
+   });
+});
+
+app.get('/login.html', function(req, res){
+    res.sendFile(path.join(__dirname, 'ui', 'login.html'));
+});
+
+app.post('/login', function (req, res) {
+   var username = req.body.username;
+   var password = req.body.password;
+   
+   pool.query('SELECT * FROM "user" WHERE username = $1', [username], function (err, result) {
+      if (err) {
+          res.status(500).send(err.toString());
+      } else {
+          if (result.rows.length === 0) {
+              res.status(403).send('username/password is invalid');
+          } else {
+              // Match the password
+              var dbString = result.rows[0].password;
+              var salt = dbString.split('$')[2];
+              var hashedPassword = hash(password, salt); // Creating a hash based on the password submitted and the original salt
+              if (hashedPassword === dbString) {
+                
+                // Set the session
+                req.session.auth = {userId: result.rows[0].id};
+                // set cookie with a session id
+                // internally, on the server side, it maps the session id to an object
+                // { auth: {userId }}
+                
+                res.send('credentials correct!');
+                
+              } else {
+                res.status(403).send('username/password is invalid');
+              }
+          }
+      }
+   });
+});
+
+app.get('/check-login', function (req, res) {
+   if (req.session && req.session.auth && req.session.auth.userId) {
+       // Load the user object
+       pool.query('SELECT * FROM "user" WHERE id = $1', [req.session.auth.userId], function (err, result) {
+           if (err) {
+              res.status(500).send(err.toString());
+           } else {
+              res.send(result.rows[0].username);    
+           }
+       });
+   } else {
+       res.status(400).send('You are not logged in');
+   }
+});
+
+app.get('/logout', function (req, res) {
+   delete req.session.auth;
+   res.send('<html><body>Logged out!<br/><br/><a href="/">Back to home</a></body></html>');
+});
+
+
+// Make this into a app.get !!!
 function get_comments(){
-     pool.query('SELECT * from comments', function(err, results){
+     pool.query('SELECT * from comments ORDER BY comment_id desc', function(err, results){
         if (err){
             return(err.toString());
         } else {
@@ -380,6 +475,148 @@ function postTemplate(data){
 
             htmlTemplate = htmlTemplate +
             `
+                <!-- Ask to login/register -->
+
+                <!-- Modal -->
+<div id="myModal" class="modal fade" role="dialog">
+  <div class="modal-dialog">
+
+    <!-- Modal content-->
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal">&times;</button>
+        <h4 class="modal-title">Modal Header</h4>
+      </div>
+      <div class="modal-body">
+       <div class="container">
+        <div class="row">
+            <div class="col-md-6 col-md-offset-3">
+                <div class="panel panel-login">
+                    <div class="panel-heading">
+                        <div class="row">
+                            <div class="col-xs-6">
+                                <a href="#" class="active" id="login-form-link">Login</a>
+                            </div>
+                            <div class="col-xs-6">
+                                <a href="#" id="register-form-link">Register</a>
+                            </div>
+                        </div>
+                        <hr>
+                    </div>
+                    <div class="panel-body">
+                        <div class="row">
+                            <div class="col-lg-12">
+                                <form id="login-form" action="http://phpoll.com/login/process" method="post" role="form" style="display: block;">
+                                    <div class="form-group">
+                                        <input type="text" name="username" id="username" tabindex="1" class="form-control" placeholder="Username" value="">
+                                    </div>
+                                    <div class="form-group">
+                                        <input type="password" name="password" id="password" tabindex="2" class="form-control" placeholder="Password">
+                                    </div>
+                                    <div class="form-group text-center">
+                                        <input type="checkbox" tabindex="3" class="" name="remember" id="remember">
+                                        <label for="remember"> Remember Me</label>
+                                    </div>
+                                    <div class="form-group">
+                                        <div class="row">
+                                            <div class="col-sm-6 col-sm-offset-3">
+                                                <input type="submit" name="login-submit" id="login-submit" tabindex="4" class="form-control btn btn-login" value="Log In">
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <div class="row">
+                                            <div class="col-lg-12">
+                                                <div class="text-center">
+                                                    <a href="http://phpoll.com/recover" tabindex="5" class="forgot-password">Forgot Password?</a>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </form>
+                                <form id="register-form" action="http://phpoll.com/register/process" method="post" role="form" style="display: none;">
+                                    <div class="form-group">
+                                        <input type="text" name="username" id="username" tabindex="1" class="form-control" placeholder="Username" value="">
+                                    </div>
+                                    <div class="form-group">
+                                        <input type="email" name="email" id="email" tabindex="1" class="form-control" placeholder="Email Address" value="">
+                                    </div>
+                                    <div class="form-group">
+                                        <input type="password" name="password" id="password" tabindex="2" class="form-control" placeholder="Password">
+                                    </div>
+                                    <div class="form-group">
+                                        <input type="password" name="confirm-password" id="confirm-password" tabindex="2" class="form-control" placeholder="Confirm Password">
+                                    </div>
+                                    <div class="form-group">
+                                        <div class="row">
+                                            <div class="col-sm-6 col-sm-offset-3">
+                                                <input type="submit" name="register-submit" id="register-submit" tabindex="4" class="form-control btn btn-register" value="Register Now">
+                                            </div>
+                                        </div>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+
+                <div class="container" id="asklogin">
+                    <div class="row">
+                        <div class="col-md-8 col-md-offset-2">
+                            <!-- Trigger the modal with a button -->
+                            <p>You need to <button type="button" class="btn btn-info btn-sm" data-toggle="modal" data-target="#myModal">LogIn/Register</button> to submit a comment!</p>
+                            <!--<input type="text" id="username" name="username">
+                            <input type="password" id="password" name="password">
+                            <input type="submit" id="login_btn" name="">-->
+                        </div>
+                    </div>
+                </div>
+
+
+           <!-- Comment box -->
+                <div class="container" id="commentbox">
+                    <div class="row">
+                        <div class="col-md-8 col-md-offset-2">
+                            <div class="panel panel-white post panel-shadow">
+                                <div class="post-heading" style="height: 280px; min-height: 200px; overflow: hidden;">
+                                    <div class="pull-left image">
+                                        <img src="http://bootdey.com/img/Content/user_1.jpg" class="img-circle avatar" alt="user profile image">
+                                    </div>
+                                    <div class="col-xs-8 meta">
+                                        <form>
+                                            <div class="form-group">
+                                                <input class="form-control input-md" id="commentAuthor" type="text" placeholder="Name">
+                                             </div>
+                                             <div class="form-group"> 
+                                               <textarea class="form-control" rows="5" id="commentContent" placeholder="Your comment here"></textarea>
+                                             </div>
+                                             <button type="button" id="submitComment" class="btn btn-default">Submit</button>
+                                        </form>
+                                    </div> 
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                   </div> 
+
+                   <div class="container">
+                    <div class="row" style="visibility:hidden" id="new_comment">
+                        <!-- space for new comment -->
+                    </div>
+                </div>
+
                 <div class="container">
             `;
             for (var i = 0; i < comments.length; i++) {
@@ -411,42 +648,6 @@ function postTemplate(data){
 
                 htmlTemplate = htmlTemplate + `
                 </div>
-                <div class="container">
-                    <!-- <div class="row"> <h2> Comments: </h2> </div> -->
-
-                    <div class="row" style="visibility:hidden" id="new_comment">
-                        <!-- space for new comment -->
-                    </div>
-                
-                </div>
-
-           <!-- Comment box -->
-                <div class="container">
-                    <div class="row">
-                        <div class="col-md-8 col-md-offset-2">
-                            <div class="panel panel-white post panel-shadow">
-                                <div class="post-heading" style="height: 280px; min-height: 200px; overflow: hidden;">
-                                    <div class="pull-left image">
-                                        <img src="http://bootdey.com/img/Content/user_1.jpg" class="img-circle avatar" alt="user profile image">
-                                    </div>
-                                    <div class="col-xs-8 meta">
-                                        <form>
-                                            <div class="form-group">
-                                                <input class="form-control input-md" id="commentAuthor" type="text" placeholder="Name">
-                                             </div>
-                                             <div class="form-group"> 
-                                               <textarea class="form-control" rows="5" id="commentContent" placeholder="Your comment here"></textarea>
-                                             </div>
-                                             <button type="button" id="submitComment" class="btn btn-default">Submit</button>
-                                        </form>
-                                    </div> 
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-
-
 
                 <hr>
                 <footer>
@@ -488,6 +689,7 @@ function postTemplate(data){
                 <script src="../vendor/bootstrap/js/bootstrap.min.js"></script>
                 <script src="../js/clean-blog.min.js"></script>
                 <script src="../main.js"></script>
+                <script src="../article.js"></script>
             </body>
             </html>`;
     return htmlTemplate;

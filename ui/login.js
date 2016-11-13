@@ -1,26 +1,3 @@
-/*-------------------------------Request for the COUNTER API endpoint---------------------------------*/
-
-var counter = document.getElementById('counter');
-
-if (counter) {
-	var req = new XMLHttpRequest();	
-	req.onreadystatechange = function(){
-		if(req.readyState === XMLHttpRequest.DONE && req.status === 200) {
-			var count = req.responseText;
-			var counter = document.getElementById('counter');
-			counter.innerHTML = count.toString();
-		}
-	};
-	req.open("GET", window.location.protocol+"//"+window.location.host+"/counter", true);
-	req.send(null);
-}
-
-
-
-
-/*-------------------------------Login JS---------------------------------*/
-
-
 var login_btn = document.getElementById('login_btn');
 var username = document.getElementById('username');
 var password = document.getElementById('password');
@@ -33,7 +10,7 @@ if (login_btn) {
 				// Do something
 				if (req.status === 200){
 					console.log('user logged in');
-					checklogin();
+					alert('user logged in');
 				} else if (req.status === 403) {
 					alert('username/password is incorrect');
 				} else if (req.status === 500) {

@@ -296,8 +296,7 @@ function homeTemplate(){
                 <div class="container-fluid">
                     <div class="navbar-header page-scroll">
                         <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
-                            <span class="sr-only">Toggle navigation</span>
-                            <i class="fa fa-bars"></i>
+                            <span class="sr-only">Toggle navigation</span>    <i class="fa fa-bars"></i>
                         </button>
                         <a class="navbar-brand" href="/">Vishal</a>
                     </div>
@@ -570,7 +569,7 @@ function postTemplate(data){
                 <div class="container">
                     <ul class="pager">
                         <li class="next">
-                            <a href="${parseInt(postID)-1}">Older Post &rarr;</a>
+                            <a style="overflow-wrap: break-word;" href="${parseInt(postID)-1}">Older Post &rarr;</a>
                         </li>
                     </ul>
                 </div>    
@@ -658,7 +657,7 @@ function postTemplate(data){
                     <div class="row">
                         <div class="col-md-8 col-md-offset-2">            
                             <br><br>
-                            <button type="button" class="btn btn-info btn-sm" data-toggle="modal" data-target="#login-modal">Login to comment!</button>
+                            <button type="button" class="btn btn-info btn-sm" data-toggle="modal" data-target="#login-modal">Login<span class="hide"> to comment!</span></button>
                             <br><br>
                         </div>
                     </div>
@@ -670,7 +669,7 @@ function postTemplate(data){
                     <div class="row">
                         <div class="col-md-8 col-md-offset-2">
                             <div class="panel panel-white post panel-shadow">
-                                <div class="post-heading" style="height: 280px; min-height: 200px; overflow: hidden;">
+                                <div class="post-heading" style="height: 280px; min-height: 250px; overflow-wrap: break-word;">
                                     <div class="pull-left image">
                                         <img id="newdisplaypic" src="http://bootdey.com/img/Content/user_1.jpg" class="img-circle avatar" alt="user profile image">
                                     </div>
@@ -704,8 +703,7 @@ function postTemplate(data){
                                 </div>
                                 <div class="pull-left meta">
                                     <div class="title h5">
-                                        <a href="#"><b>`+comments[i].comment_author+`</b></a>
-                                        made a comment.
+                                        <a href="#"><b>`+comments[i].comment_author+`</b></a> made a comment.
                                     </div>
                                     <h6 class="text-muted time">`+(comments[i].comment_date).toGMTString()+`</h6>
                                 </div>

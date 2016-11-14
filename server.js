@@ -34,6 +34,7 @@ var pool = new Pool(config);
 
 get_posts();
 get_comments();
+get_users();
 
 
 
@@ -114,6 +115,7 @@ app.get('/submit-comment/:postID', function(req, res){
 app.get('/posts/:postID', function (req, res) {
     get_posts();
     get_comments();
+    get_users();
     res.send(postTemplate(req.params.postID));
 });
 
@@ -477,9 +479,6 @@ function postTemplate(data){
     var date = (posts[postID].post_date).toDateString();
     var postContent = posts[postID].post_content;
 
-    get_users();
-
-
     var htmlTemplate = `
         <!DOCTYPE html>
         <html lang="en">
@@ -712,7 +711,7 @@ function postTemplate(data){
                                 </div>
                             </div> 
                             <div class="post-description"> 
-                                <p style="overflow-wrap: break-word; margin: 0 0 10px 80px">`+comments[i].comment_content+`</p>
+                                <p>`+comments[i].comment_content+`</p>
                             </div>
                         </div>
                     </div>

@@ -82,7 +82,7 @@ var date=new Date();
 				   									</div> 
 				   									</div>
 				   									<div class="post-description"> 
-				   										<p style="overflow-wrap: break-word; margin: 0 0 10px 80px">${commentContent}</p>
+				   										<p>${commentContent}</p>
 				   									</div>
 				   								</div>
 				   							</div>

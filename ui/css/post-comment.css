@@ -46,7 +46,16 @@
 }
 .post .post-description p {
   font-size: 16px;
+  overflow-wrap: break-word; 
+  margin: 0 0 10px 80px;
 }
+
+@media only screen and (max-width: 360px){
+  .post .post-description p {
+    margin: 50px 0 10px 10px
+ }
+}
+
 .post .post-description .stats {
   margin-top: 20px;
 }

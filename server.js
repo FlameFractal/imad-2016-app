@@ -295,7 +295,7 @@ function homeTemplate(){
                     <div class="navbar-header page-scroll">
                         <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
                             <span class="sr-only">Toggle navigation</span>
-                            Menu <i class="fa fa-bars"></i>
+                            <i class="fa fa-bars"></i>
                         </button>
                         <a class="navbar-brand" href="/">Vishal</a>
                     </div>
@@ -311,7 +311,10 @@ function homeTemplate(){
                                 <a href="/contact">Contact</a>
                             </li>
                             <li>
-                                <a data-toggle="modal" data-target="#login-modal" href="#">Login/Register</a>
+                                <a id="loginnavbar" data-toggle="modal" data-target="#login-modal" href="#">Login/Register</a>
+                            </li>
+                            <li>
+                                <a id="logoutnavbar" onclick="logout()" href="">Logout</a>
                             </li>
                         </ul>
                     </div>
@@ -450,7 +453,7 @@ function homeTemplate(){
                                     </a>
                                 </li>
                             </ul>
-                            <p class="copyright text-muted">This website has been visited <b><span id="counter">2016</span></b> times since inception.</p>
+                            <p class="copyright text-muted">This website has been visited <b><span id="counter"></span></b> times since inception.</p>
                         </div>
                     </div>
                 </div>
@@ -499,7 +502,7 @@ function postTemplate(data){
                     <div class="navbar-header page-scroll">
                         <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
                             <span class="sr-only">Toggle navigation</span>
-                            Menu <i class="fa fa-bars"></i>
+                            <i class="fa fa-bars"></i>
                         </button>
                         <a class="navbar-brand" href="/">Vishal</a>
                     </div>
@@ -515,8 +518,11 @@ function postTemplate(data){
                                 <a href="/contact">Contact</a>
                             </li>
                             <li>
-                                <a data-toggle="modal" data-target="#login-modal" href="#">Login/Register</a>
+                                <a id="loginnavbar" data-toggle="modal" data-target="#login-modal" href="#">Login/Register</a>
                             </li>
+                            <li>
+                              <a id="logoutnavbar" onclick="logout()" href="">Logout</a>
+                          </li>
                         </ul>
                     </div>
                 </div>
@@ -685,13 +691,8 @@ function postTemplate(data){
                    </div> 
 
                    <div class="container">
-                    <div class="row" style="visibility:hidden" id="new_comment">
-                        <!-- space for new comment -->
-                    </div>
-                </div>
-
-                <div class="container">
-                 <div class="row"> 
+                    <div class="row" id="new_comment">
+                     
             `;
             for (var i = 0; i < comments.length; i++) {
                 if (comments[i].post_id === parseInt(postID)){ 
@@ -754,7 +755,7 @@ function postTemplate(data){
                                         </a>
                                     </li>
                                 </ul>
-                                <p class="copyright text-muted">This website has been visited <b><span id="counter">2016</span></b> times since inception.</p>
+                                <p class="copyright text-muted">This website has been visited <b><span id="counter"></span></b> times since inception.</p>
                             </div>
                         </div>
                     </div>

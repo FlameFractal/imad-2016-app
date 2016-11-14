@@ -67,12 +67,7 @@ var date=new Date();
 			   						var new_comment = document.getElementById('new_comment');
 			   						$("#new_comment").removeAttr("style");
 			   						$("#commentContent").val("");
-			   						new_comment.outerHTML = `
-			   						<div class="row" style="visibility:hidden" id="new_comment">
-			   						<!-- space for new comment -->
-			   						</div>
-
-			   						<div class="row"> 
+			   						new_comment.innerHTML = `
 			   							<div class="col-sm-8 col-sm-offset-2">
 			   								<div class="panel panel-white post panel-shadow">
 			   									<div class="post-heading">
@@ -85,14 +80,13 @@ var date=new Date();
 				   										</div>
 				   										<h6 class="text-muted time">${date.toGMTString()}</h6>
 				   									</div> 
+				   									</div>
 				   									<div class="post-description"> 
-				   										<p>${commentContent}</p>
+				   										<p style="overflow-wrap: break-word; margin: 0 0 10px 80px">${commentContent}</p>
 				   									</div>
 				   								</div>
 				   							</div>
-				   						</div>
-			   						</div>
-			   						`
+			   						` + new_comment.innerHTML;
 			   					}
 			   				}
 		   				}
@@ -142,9 +136,13 @@ function setdisplaypic(username){
 					$("#login-modal").modal("hide");
 					$('#asklogin').hide();
 					$('#commentbox').show();
+					$('#loginnavbar').hide();
+					$('#logoutnavbar').show();
 					setdisplaypic(req.responseText);
 					console.log('user logged in');
 				} else {
+					$('#logoutnavbar').hide();
+					$('#loginnavbar').show();
 					$('#asklogin').show();
 					$('#commentbox').hide();
 				}		

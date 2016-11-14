@@ -74,6 +74,8 @@ if (register_btn) {
 					// 		console.log('New user created!');
 							document.getElementById('username').value = document.getElementById('new_username').value;
 							document.getElementById('password').value = document.getElementById('new_password').value;
+							document.getElementById('new_username').value = '';
+							document.getElementById('new_password').value = '';
 							alert('New user created!');
 							$('#login_btn').click();
 					// 		checklogin();
@@ -84,7 +86,7 @@ if (register_btn) {
 				} else if (req.status === 500) {
 					console.log('username = '+new_username);
 					console.log('password = '+new_password);
-					alert('something went wrong!');
+					alert('username already exists!');
 				}
 			}
 		};
@@ -103,10 +105,14 @@ if (register_btn) {
 
 
 
-
 if (logout_btn) {
-	logout_btn.onclick = function(){
-		var req = new XMLHttpRequest();	
+	$('#logout_btn')[0].onclick = logout;
+	checklogin();
+}
+
+
+function logout(){
+	var req = new XMLHttpRequest();	
 		req.onreadystatechange = function(){
 			if(req.readyState === XMLHttpRequest.DONE){
 				// Do something
@@ -114,13 +120,12 @@ if (logout_btn) {
 					console.log('user logged out');
 					checklogin();
 				} else if (req.status === 403) {
-					alert('username/password is incorrect');
+					alert('username/password is incorrect!');
 				} else if (req.status === 500) {
-					alert('something went wrong!');
+					alert('username/password is incorrect!');
 				}
 			}
 		};
 		req.open("GET", window.location.protocol+"//"+window.location.host+"/logout", true);
-		req.send(null	);
-	}
+		req.send(null);
 }

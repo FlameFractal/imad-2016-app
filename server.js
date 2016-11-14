@@ -249,7 +249,7 @@ function get_users() {
             return(err.toString());
         } else {
             if (results.rows.length === 0 ) {
-                return(err.toString());
+                // return(err.toString());
             } else {
                 users = results.rows;
             }

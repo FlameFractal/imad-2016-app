@@ -36,6 +36,7 @@ var date=new Date();
    	submitComment.onclick = function(){
    		commentContent = document.getElementById('commentContent').value;
    		var date = new Date();
+   		console.log(date);
 
    		if (commentContent === '') {
    			$(document).bind('keypress', function(e) {
@@ -72,7 +73,7 @@ var date=new Date();
 			   						</div>
 
 			   						<div class="row"> 
-			   							<div class="col-md-8 col-md-offset-2">
+			   							<div class="col-sm-8 col-sm-offset-2">
 			   								<div class="panel panel-white post panel-shadow">
 			   									<div class="post-heading">
 			   										<div class="pull-left image">
@@ -81,8 +82,8 @@ var date=new Date();
 				   									<div class="pull-left meta">
 				   										<div class="title h5">
 				   											<a href="#" id="author"><b>${commentAuthor}</b></a>
-				   												commented on ${date.toGMTString()}.
 				   										</div>
+				   										<h6 class="text-muted time">${date.toGMTString()}</h6>
 				   									</div> 
 				   									<div class="post-description"> 
 				   										<p>${commentContent}</p>

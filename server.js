@@ -287,6 +287,7 @@ function homeTemplate(){
             <link href="vendor/font-awesome/css/font-awesome.min.css" rel="stylesheet" type="text/css">
             <link href='//fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic' rel='stylesheet' type='text/css'>
             <link href='//fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800' rel='stylesheet' type='text/css'>
+            <link href="../css/modal.css" rel="stylesheet">
         </head>
         <body>
             <nav class="navbar navbar-default navbar-custom navbar-fixed-top">
@@ -296,7 +297,7 @@ function homeTemplate(){
                             <span class="sr-only">Toggle navigation</span>
                             Menu <i class="fa fa-bars"></i>
                         </button>
-                        <a class="navbar-brand" href="/">Vishal Gauba</a>
+                        <a class="navbar-brand" href="/">Vishal G</a>
                     </div>
                     <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
                         <ul class="nav navbar-nav navbar-right">
@@ -308,6 +309,9 @@ function homeTemplate(){
                             </li>
                             <li>
                                 <a href="/contact">Contact</a>
+                            </li>
+                            <li>
+                                <a data-toggle="modal" data-target="#login-modal" href="#">Login/Register</a>
                             </li>
                         </ul>
                     </div>
@@ -360,6 +364,62 @@ function homeTemplate(){
             </div>
                 </div>
             </div>
+
+            <!-- Ask to login/register -->
+                <!-- Modal -->
+                <div id="login-modal" class="modal fade" role="dialog">
+                  <div class="modal-dialog">
+
+                    <!-- Modal content-->
+                    <div class="modal-content">
+                      <div class="modal-body">
+                        <div class="container-fluid">
+                             <div class="row">
+                                 <div class="">
+                                        <div class="form-body">
+                                            <ul class="nav nav-tabs final-login">
+                                                <li class="active"><a data-toggle="tab" href="#sectionA">Existing User</a></li>
+                                                <li><a data-toggle="tab" href="#sectionB">New User</a></li>
+                                            </ul>
+                                            <div class="tab-content">
+                                                <div id="sectionA" class="tab-pane fade in active">
+                                                    <div class="innter-form">
+                                                        <form class="sa-innate-form" method="post">
+                                                            <label>Username</label>
+                                                            <input type="text" id="username">
+                                                            <label>Password</label>
+                                                            <input type="password" id="password">
+                                                            <button type="button" id="login_btn">Sign In!</button>
+                                                        </form>
+                                                    </div>
+                                                    <div class="clearfix"></div>
+                                                </div>
+                                                <div id="sectionB" class="tab-pane fade">
+                                                    <div class="innter-form">
+                                                        <form class="sa-innate-form" method="post">
+                                                            <label>New Username</label>
+                                                            <input type="text" id="new_username">
+                                                            <label>New Password</label>
+                                                            <input type="password" id="new_password">
+                                                            <button type="button" id="register_btn">Register!</button>
+                                                        </form>
+                                                    </div>
+                                                    
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                      </div>
+                      <div class="modal-footer">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                      </div>
+                    </div>
+
+                  </div>
+                </div>
+                
             <footer>
                 <div class="container">
                     <div class="row">
@@ -399,6 +459,7 @@ function homeTemplate(){
             <script src="vendor/bootstrap/js/bootstrap.min.js"></script>
             <script src="js/clean-blog.min.js"></script>
             <script src="../main.js"></script>
+            <script src="../article.js"></script>
         </body>
         </html>`
     return htmlTemplate;
@@ -440,7 +501,7 @@ function postTemplate(data){
                             <span class="sr-only">Toggle navigation</span>
                             Menu <i class="fa fa-bars"></i>
                         </button>
-                        <a class="navbar-brand" href="/">Vishal Gauba</a>
+                        <a class="navbar-brand" href="/">Vishal G</a>
                     </div>
                     <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
                         <ul class="nav navbar-nav navbar-right">
@@ -452,6 +513,9 @@ function postTemplate(data){
                             </li>
                             <li>
                                 <a href="/contact">Contact</a>
+                            </li>
+                            <li>
+                                <a data-toggle="modal" data-target="#login-modal" href="#">Login/Register</a>
                             </li>
                         </ul>
                     </div>
@@ -589,7 +653,7 @@ function postTemplate(data){
                     <div class="row">
                         <div class="col-md-8 col-md-offset-2">            
                             <br><br>
-                            <button type="button" class="btn btn-info btn-sm" data-toggle="modal" data-target="#login-modal">LogIn/Register to comment!</button>
+                            <button type="button" class="btn btn-info btn-sm" data-toggle="modal" data-target="#login-modal">Login to comment!</button>
                             <br><br>
                         </div>
                     </div>

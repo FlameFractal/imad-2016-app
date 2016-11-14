@@ -647,7 +647,7 @@ function postTemplate(data){
                                 </div>
                             </div> 
                             <div class="post-description"> 
-                                <p style="overflow-wrap: break-word; margin: 0 0 10px">`+comments[i].comment_content+`</p>
+                                <p style="overflow-wrap: break-word; margin: 0 0 10px 80px">`+comments[i].comment_content+`</p>
                             </div>
                         </div>
                     </div>

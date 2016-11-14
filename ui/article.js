@@ -19,7 +19,7 @@ var date=new Date();
    	$(document).ready(function(){	
    		$(document).bind('keypress', function(e) {
    			if(e.keyCode==13 && !e.shiftKey){
-   				e.preventDefault();
+   				// e.preventDefault();
    				commentContent = document.getElementById('commentContent').value;
    				if (commentContent === '') {
    					$("#commentContent").attr("placeholder", "Comment is required !");
@@ -39,10 +39,10 @@ var date=new Date();
 
    		if (commentContent === '') {
    			$(document).bind('keypress', function(e) {
-   			if(e.keyCode==13 && !e.shiftKey){
-   				e.preventDefault();
-   			}
-   		});
+	   			if(e.keyCode==13 && !e.shiftKey){
+	   				// e.preventDefault();
+	   			}
+   			});
 
    			$("#commentContent").attr("placeholder", "Comment is required !");
    		

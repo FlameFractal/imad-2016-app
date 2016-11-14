@@ -26,6 +26,7 @@ var config = {
 
 
 /* All the global variables */
+var users = [];
 var comments = [];
 var posts = [];
 var counter;
@@ -94,20 +95,18 @@ app.get('/counter', function(req, res){
 app.get('/submit-comment/:postID', function(req, res){
     if (req.session && req.session.auth && req.session.auth.userId) {
         var postID = req.params.postID;
-        var author = req.query.author;
+        var author = req.session.username;
         var content = req.query.content;
         
         /* Write to database */
-        var query = "INSERT INTO comments (post_id, comment_author, comment_content) values ('"+postID+"','"+author+"','"+content+"');";
+        var query = "INSERT INTO comments (post_id, comment_author, comment_content, comment_date) values ('"+postID+"','"+author+"','"+content+"',now());";
         pool.query(query, function(err, results){
             if (err){
-                return(err.toString());
+                res.status(403).send(err.toString());
             } else {
-                    console.log("");
-                }
+                res.send(author);
+            }
         });
-
-        res.send('Succeeded.<br> author='+author+' <br>content='+content);
     }
 });
 
@@ -132,13 +131,24 @@ app.post('/create-user', function (req, res) {
    var password = req.body.password;
    var salt = crypto.randomBytes(128).toString('hex');
    var dbString = hash(password, salt);
-   pool.query('INSERT INTO "user" (username, password) VALUES ($1, $2)', [username, dbString], function (err, result) {
+   pool.query('INSERT INTO "users" (username, password, displaypic) VALUES ($1, $2, '+(Math.floor(Math.random() * (3)) + 1)+')', [username, dbString], function (err, result) {
       if (err) {
           res.status(500).send(err.toString());
       } else {
           res.send('User successfully created: ' + username);
       }
    });
+});
+
+app.get('/user/:username', function(req, res){
+    var username = req.params.username;
+   pool.query("SELECT username, displaypic FROM users WHERE username=$1", [username], function (err, result) {
+      if (err) {
+          res.status(500).send(err.toString());
+      } else {
+          res.send(result.rows[0]);
+      }
+   }); 
 });
 
 app.get('/login.html', function(req, res){
@@ -149,7 +159,7 @@ app.post('/login', function (req, res) {
    var username = req.body.username;
    var password = req.body.password;
    
-   pool.query('SELECT * FROM "user" WHERE username = $1', [username], function (err, result) {
+   pool.query('SELECT * FROM "users" WHERE username = $1', [username], function (err, result) {
       if (err) {
           res.status(500).send(err.toString());
       } else {
@@ -164,6 +174,9 @@ app.post('/login', function (req, res) {
                 
                 // Set the session
                 req.session.auth = {userId: result.rows[0].id};
+                req.session.username = req.body.username;
+                console.log(req.session.auth);
+                console.log(req.session.username);
                 // set cookie with a session id
                 // internally, on the server side, it maps the session id to an object
                 // { auth: {userId }}
@@ -181,7 +194,7 @@ app.post('/login', function (req, res) {
 app.get('/check-login', function (req, res) {
    if (req.session && req.session.auth && req.session.auth.userId) {
        // Load the user object
-       pool.query('SELECT * FROM "user" WHERE id = $1', [req.session.auth.userId], function (err, result) {
+       pool.query('SELECT * FROM "users" WHERE id = $1', [req.session.auth.userId], function (err, result) {
            if (err) {
               res.status(500).send(err.toString());
            } else {
@@ -195,6 +208,7 @@ app.get('/check-login', function (req, res) {
 
 app.get('/logout', function (req, res) {
    delete req.session.auth;
+   delete req.session.username;
    res.send('<html><body>Logged out!<br/><br/><a href="/">Back to home</a></body></html>');
 });
 
@@ -222,6 +236,40 @@ function get_posts(){
             }
         }
     });
+}
+
+app.get('/getUsers', function (req, res) {
+   get_users();
+   res.send(users);
+});
+
+function get_users() {
+    pool.query('SELECT username, displaypic from users ', function(err, results){
+        if (err){
+            return(err.toString());
+        } else {
+            if (results.rows.length === 0 ) {
+                return(err.toString());
+            } else {
+                users = results.rows;
+            }
+        }
+    });
+}
+
+function findUser(username) {
+    get_users();
+    console.log("username = "+username);
+    var found = null;
+    for (var i = 0; i < users.length; i++) {
+        var element = users[i];
+
+        if (element.username == username) {
+           found = element;
+       } 
+    }
+    console.log(found);
+    return found;
 }
 
 
@@ -365,6 +413,9 @@ function postTemplate(data){
     var date = (posts[postID].post_date).toDateString();
     var postContent = posts[postID].post_content;
 
+    get_users();
+
+
     var htmlTemplate = `
         <!DOCTYPE html>
         <html lang="en">
@@ -374,6 +425,7 @@ function postTemplate(data){
             <meta name="viewport" content="width=device-width, initial-scale=1">
             <title>${title}</title>
             <link href="../css/post-comment.css" rel="stylesheet">
+            <link href="../css/modal.css" rel="stylesheet">
             <link href="../vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
             <link href="../css/clean-blog.min.css" rel="stylesheet">
             <link href="../vendor/font-awesome/css/font-awesome.min.css" rel="stylesheet" type="text/css">
@@ -476,110 +528,69 @@ function postTemplate(data){
             htmlTemplate = htmlTemplate +
             `
                 <!-- Ask to login/register -->
-
                 <!-- Modal -->
-<div id="myModal" class="modal fade" role="dialog">
-  <div class="modal-dialog">
+                <div id="login-modal" class="modal fade" role="dialog">
+                  <div class="modal-dialog">
 
-    <!-- Modal content-->
-    <div class="modal-content">
-      <div class="modal-header">
-        <button type="button" class="close" data-dismiss="modal">&times;</button>
-        <h4 class="modal-title">Modal Header</h4>
-      </div>
-      <div class="modal-body">
-       <div class="container">
-        <div class="row">
-            <div class="col-md-6 col-md-offset-3">
-                <div class="panel panel-login">
-                    <div class="panel-heading">
-                        <div class="row">
-                            <div class="col-xs-6">
-                                <a href="#" class="active" id="login-form-link">Login</a>
-                            </div>
-                            <div class="col-xs-6">
-                                <a href="#" id="register-form-link">Register</a>
-                            </div>
-                        </div>
-                        <hr>
-                    </div>
-                    <div class="panel-body">
-                        <div class="row">
-                            <div class="col-lg-12">
-                                <form id="login-form" action="http://phpoll.com/login/process" method="post" role="form" style="display: block;">
-                                    <div class="form-group">
-                                        <input type="text" name="username" id="username" tabindex="1" class="form-control" placeholder="Username" value="">
-                                    </div>
-                                    <div class="form-group">
-                                        <input type="password" name="password" id="password" tabindex="2" class="form-control" placeholder="Password">
-                                    </div>
-                                    <div class="form-group text-center">
-                                        <input type="checkbox" tabindex="3" class="" name="remember" id="remember">
-                                        <label for="remember"> Remember Me</label>
-                                    </div>
-                                    <div class="form-group">
-                                        <div class="row">
-                                            <div class="col-sm-6 col-sm-offset-3">
-                                                <input type="submit" name="login-submit" id="login-submit" tabindex="4" class="form-control btn btn-login" value="Log In">
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="form-group">
-                                        <div class="row">
-                                            <div class="col-lg-12">
-                                                <div class="text-center">
-                                                    <a href="http://phpoll.com/recover" tabindex="5" class="forgot-password">Forgot Password?</a>
+                    <!-- Modal content-->
+                    <div class="modal-content">
+                      <div class="modal-body">
+                        <div class="container-fluid">
+                             <div class="row">
+                                 <div class="">
+                                        <div class="form-body">
+                                            <ul class="nav nav-tabs final-login">
+                                                <li class="active"><a data-toggle="tab" href="#sectionA">Existing User</a></li>
+                                                <li><a data-toggle="tab" href="#sectionB">New User</a></li>
+                                            </ul>
+                                            <div class="tab-content">
+                                                <div id="sectionA" class="tab-pane fade in active">
+                                                    <div class="innter-form">
+                                                        <form class="sa-innate-form" method="post">
+                                                            <label>Username</label>
+                                                            <input type="text" id="username">
+                                                            <label>Password</label>
+                                                            <input type="password" id="password">
+                                                            <button type="button" id="login_btn">Sign In!</button>
+                                                        </form>
+                                                    </div>
+                                                    <div class="clearfix"></div>
+                                                </div>
+                                                <div id="sectionB" class="tab-pane fade">
+                                                    <div class="innter-form">
+                                                        <form class="sa-innate-form" method="post">
+                                                            <label>New Username</label>
+                                                            <input type="text" id="new_username">
+                                                            <label>New Password</label>
+                                                            <input type="password" id="new_password">
+                                                            <button type="button" id="register_btn">Register!</button>
+                                                        </form>
+                                                    </div>
+                                                    
                                                 </div>
                                             </div>
                                         </div>
                                     </div>
-                                </form>
-                                <form id="register-form" action="http://phpoll.com/register/process" method="post" role="form" style="display: none;">
-                                    <div class="form-group">
-                                        <input type="text" name="username" id="username" tabindex="1" class="form-control" placeholder="Username" value="">
-                                    </div>
-                                    <div class="form-group">
-                                        <input type="email" name="email" id="email" tabindex="1" class="form-control" placeholder="Email Address" value="">
-                                    </div>
-                                    <div class="form-group">
-                                        <input type="password" name="password" id="password" tabindex="2" class="form-control" placeholder="Password">
-                                    </div>
-                                    <div class="form-group">
-                                        <input type="password" name="confirm-password" id="confirm-password" tabindex="2" class="form-control" placeholder="Confirm Password">
-                                    </div>
-                                    <div class="form-group">
-                                        <div class="row">
-                                            <div class="col-sm-6 col-sm-offset-3">
-                                                <input type="submit" name="register-submit" id="register-submit" tabindex="4" class="form-control btn btn-register" value="Register Now">
-                                            </div>
-                                        </div>
-                                    </div>
-                                </form>
+                                </div>
                             </div>
-                        </div>
+                      </div>
+                      <div class="modal-footer">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                      </div>
                     </div>
+
+                  </div>
                 </div>
-            </div>
-        </div>
-    </div>
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-      </div>
-    </div>
+                
 
-  </div>
-</div>
-
+                <!-- Trigger the modal with a button -->
 
                 <div class="container" id="asklogin">
                     <div class="row">
-                        <div class="col-md-8 col-md-offset-2">
-                            <!-- Trigger the modal with a button -->
-                            <p>You need to <button type="button" class="btn btn-info btn-sm" data-toggle="modal" data-target="#myModal">LogIn/Register</button> to submit a comment!</p>
-                            <!--<input type="text" id="username" name="username">
-                            <input type="password" id="password" name="password">
-                            <input type="submit" id="login_btn" name="">-->
+                        <div class="col-md-8 col-md-offset-2">            
+                            <br><br>
+                            <button type="button" class="btn btn-info btn-sm" data-toggle="modal" data-target="#login-modal">LogIn/Register to comment!</button>
+                            <br><br>
                         </div>
                     </div>
                 </div>
@@ -592,17 +603,15 @@ function postTemplate(data){
                             <div class="panel panel-white post panel-shadow">
                                 <div class="post-heading" style="height: 280px; min-height: 200px; overflow: hidden;">
                                     <div class="pull-left image">
-                                        <img src="http://bootdey.com/img/Content/user_1.jpg" class="img-circle avatar" alt="user profile image">
+                                        <img id="newdisplaypic" src="http://bootdey.com/img/Content/user_1.jpg" class="img-circle avatar" alt="user profile image">
                                     </div>
                                     <div class="col-xs-8 meta">
                                         <form>
-                                            <div class="form-group">
-                                                <input class="form-control input-md" id="commentAuthor" type="text" placeholder="Name">
-                                             </div>
                                              <div class="form-group"> 
                                                <textarea class="form-control" rows="5" id="commentContent" placeholder="Your comment here"></textarea>
                                              </div>
                                              <button type="button" id="submitComment" class="btn btn-default">Submit</button>
+                                             <button type="button" id="logout_btn" class="btn btn-default">LogOut</button>
                                         </form>
                                     </div> 
                                 </div>
@@ -627,12 +636,12 @@ function postTemplate(data){
                                 <div class="panel panel-white post panel-shadow">
                                     <div class="post-heading">
                                         <div class="pull-left image">
-                                            <img src="http://bootdey.com/img/Content/user_`+(Math.floor(Math.random() * (3)) + 1)+`.jpg" class="img-circle avatar" alt="user profile image">
+                                            <img src="http://bootdey.com/img/Content/user_`+findUser(comments[i].comment_author).displaypic+`.jpg" class="img-circle avatar" alt="user profile image">
                                         </div>
                                         <div class="pull-left meta">
                                             <div class="title h5">
                                                 <a href="#" id="author"><b>`+comments[i].comment_author+`</b></a>
-                                                commented.
+                                                commented on `+(comments[i].comment_date).toGMTString()+`
                                             </div>
                                         </div> 
                                         <div class="post-description"> 

@@ -627,37 +627,38 @@ function postTemplate(data){
                 </div>
 
                 <div class="container">
+                 <div class="row"> 
             `;
             for (var i = 0; i < comments.length; i++) {
                 if (comments[i].post_id === parseInt(postID)){ 
                   htmlTemplate = htmlTemplate +  `
-                    <div class="row"> 
-                            <div class="col-md-8 col-md-offset-2">
-                                <div class="panel panel-white post panel-shadow">
-                                    <div class="post-heading">
-                                        <div class="pull-left image">
-                                            <img src="http://bootdey.com/img/Content/user_`+findUser(comments[i].comment_author).displaypic+`.jpg" class="img-circle avatar" alt="user profile image">
-                                        </div>
-                                        <div class="pull-left meta">
-                                            <div class="title h5">
-                                                <a href="#" id="author"><b>`+comments[i].comment_author+`</b></a>
-                                                commented on `+(comments[i].comment_date).toGMTString()+`
-                                            </div>
-                                        </div> 
-                                        <div class="post-description"> 
-                                            <p>`+comments[i].comment_content+`</p>
-                                        </div>
-                                    </div>
+                   <div class="col-sm-8 col-sm-offset-2">
+                        <div class="panel panel-white post panel-shadow">
+                            <div class="post-heading">
+                                <div class="pull-left image">
+                                    <img src="http://bootdey.com/img/Content/user_`+findUser(comments[i].comment_author).displaypic+`.jpg" class="img-circle avatar" alt="user profile image">
                                 </div>
+                                <div class="pull-left meta">
+                                    <div class="title h5">
+                                        <a href="#"><b>`+comments[i].comment_author+`</b></a>
+                                        made a comment.
+                                    </div>
+                                    <h6 class="text-muted time">`+(comments[i].comment_date).toGMTString()+`</h6>
+                                </div>
+                            </div> 
+                            <div class="post-description"> 
+                                <p style="overflow-wrap: break-word; margin: 0 0 10px">`+comments[i].comment_content+`</p>
                             </div>
-                       </div>
+                        </div>
+                    </div>
+                            
                        ` ;
                    }
                }
 
                 htmlTemplate = htmlTemplate + `
                 </div>
-
+                </div>
                 <hr>
                 <footer>
                     <div class="container">

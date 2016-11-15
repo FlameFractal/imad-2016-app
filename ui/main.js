@@ -1,3 +1,20 @@
+/*----------------Prevent spaces in inputs ----------------*/
+
+$(document).ready(function(){		
+	$("#username").on("keydown", function (e) {
+	    return e.which !== 32;
+	});
+	$("#password").on("keydown", function (e) {
+	    return e.which !== 32;
+	});
+	$("#new_username").on("keydown", function (e) {
+	    return e.which !== 32;
+	});
+	$("#new_password").on("keydown", function (e) {
+	    return e.which !== 32;
+	});
+});
+
 /*-------------------------------Request for the COUNTER API endpoint---------------------------------*/
 
 var counter = document.getElementById('counter');
@@ -133,3 +150,7 @@ function logout(){
 		req.open("GET", window.location.protocol+"//"+window.location.host+"/logout", true);
 		req.send(null);
 }
+
+
+
+

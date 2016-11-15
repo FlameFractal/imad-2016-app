@@ -1,3 +1,11 @@
+function escapeHtml(unsafe) {
+    return unsafe
+         .replace(/&/g, "&amp;")
+         .replace(/</g, "&lt;")
+         .replace(/>/g, "&gt;")
+         .replace(/"/g, "&quot;")
+         .replace(/'/g, "&#039;");
+}
 
 /*------------------------------- Article/Post Comment Submission ---------------------------------*/
 
@@ -20,7 +28,7 @@ var date=new Date();
    		$(document).bind('keypress', function(e) {
    			if(e.keyCode==13 && !e.shiftKey){
    				// e.preventDefault();
-   				commentContent = document.getElementById('commentContent').value;
+   				commentContent = escapeHtml(document.getElementById('commentContent').value);
    				if (commentContent === '') {
    					$("#commentContent").attr("placeholder", "Comment is required !");
    				} else {
@@ -34,7 +42,7 @@ var date=new Date();
 
 
    	submitComment.onclick = function(){
-   		commentContent = document.getElementById('commentContent').value;
+   		commentContent = escapeHtml(document.getElementById('commentContent').value);
    		var date = new Date();
    		console.log(date);
 
@@ -61,12 +69,16 @@ var date=new Date();
 
 						req3.onreadystatechange = function(){
 							if(req3.readyState === XMLHttpRequest.DONE) {
-	   							if (req3.status === 400) {	
-			   					} else if (req3.status === 200) {
+			   					if (req3.status === 200) {
 			   						console.log(req3.responseText);
 			   						var new_comment = document.getElementById('new_comment');
 			   						$("#new_comment").removeAttr("style");
 			   						$("#commentContent").val("");
+			   						$('#commentdone').fadeIn();
+			   						setTimeout(function() {
+			   							$('#commentdone').fadeOut();
+			   						}, 1500);
+
 			   						new_comment.innerHTML = `
 			   							<div class="col-sm-8 col-sm-offset-2">
 			   								<div class="panel panel-white post panel-shadow">
@@ -87,6 +99,12 @@ var date=new Date();
 				   								</div>
 				   							</div>
 			   						` + new_comment.innerHTML;
+			   					} else {
+			   						console.log(req3.status);
+			   						$('#commenterror').fadeIn();
+			   						setTimeout(function() {
+			   							$('#commenterror').fadeOut();
+			   						}, 1500);
 			   					}
 			   				}
 		   				}
@@ -97,7 +115,7 @@ var date=new Date();
    					}
    				}
    			};
-			req2.open("GET", window.location.protocol+"//"+window.location.host+"/submit-comment/"+post_id+"?content="+(commentContent), true);
+			req2.open("GET", window.location.protocol+"//"+window.location.host+"/submit-comment/"+post_id+"?content="+escapeHtml(commentContent), true);
 				req2.send(null);		
 			}
 		}

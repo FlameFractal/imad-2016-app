@@ -92,12 +92,20 @@ app.get('/counter', function(req, res){
 
 });
 
+function escapeHtml(unsafe) {
+    return unsafe
+         .replace(/&/g, "&amp;")
+         .replace(/</g, "&lt;")
+         .replace(/>/g, "&gt;")
+         .replace(/"/g, "&quot;")
+         .replace(/'/g, "&#039;");
+}
 
 app.get('/submit-comment/:postID', function(req, res){
     if (req.session && req.session.auth && req.session.auth.userId) {
         var postID = req.params.postID;
         var author = req.session.username;
-        var content = req.query.content;
+        var content = escapeHtml(req.query.content);
         
         /* Write to database */
         var query = "INSERT INTO comments (post_id, comment_author, comment_content, comment_date) values ('"+postID+"','"+author+"','"+content+"',now());";
@@ -683,9 +691,30 @@ function postTemplate(data){
                                         </form>
                                     </div> 
                                 </div>
-                            </div>
-                        </div>
-                    </div>
+                            
+	                            <div class="container" id="commentdone" style="display: none">
+									<div class="row">
+										<div class="col-sm-4 col-sm-offset-1 alert alert-info alert-dismissible fade in" role="alert" style="padding-top: 5px; padding-bottom: 5px;">
+											<button type="button" class="close" data-dismiss="alert" aria-label="Close">
+												<span aria-hidden="true">&times;</span>
+											</button>
+											<strong>Done!</strong> Posted successfully.
+										</div>
+	                        		</div>
+	                    		</div>
+	                    		<div class="container" id="commenterror" style="display: none">
+									<div class="row">
+										<div class="col-sm-4 col-sm-offset-1 alert alert-danger alert-dismissible fade in" role="alert" style="padding-top: 5px; padding-bottom: 5px;">
+											<button type="button" class="close" data-dismiss="alert" aria-label="Close">
+												<span aria-hidden="true">&times;</span>
+											</button>
+											<strong>Error!</strong> Could not post.
+										</div>
+	                        		</div>
+	                    		</div>
+	                   		</div>
+                   		</div>
+                   	</div>
                    </div> 
 
                    <div class="container">
@@ -760,8 +789,8 @@ function postTemplate(data){
                 <script src="../vendor/jquery/jquery.min.js"></script>
                 <script src="../vendor/bootstrap/js/bootstrap.min.js"></script>
                 <script src="../js/clean-blog.min.js"></script>
-                <script src="../main.js"></script>
                 <script src="../article.js"></script>
+                <script src="../main.js"></script>
             </body>
             </html>`;
     return htmlTemplate;

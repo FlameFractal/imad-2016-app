@@ -17,13 +17,13 @@ app.use(session({
 /* DB init stuff */
 var Pool = require('pg').Pool;
 var config = {
-  user: process.env.IMADUSER,
-  password: process.env.IMADPASSWORD,
-  database: process.env.IMADDB,
-  host: process.env.IMADHOST,
+  user: process.env.IMADUSER || 'flamefractal',
+  database: process.env.IMADDB || 'flamefractal',
+  password: process.env.IMADPASSWORD || process.env.DB_PASSWORD,
+  host: process.env.IMADHOST || 'db.imad.hasura-app.io',
   port: '5432',
 };
-
+config=testdb();
 
 /* All the global variables */
 var users = [];
@@ -280,6 +280,18 @@ function findUser(username) {
     }
     console.log(found);
     return found;
+}
+
+function testdb(){
+  var config = {
+    user: process.env.IMADUSER || 'tjsooxajhxixee',
+    database: process.env.IMADDB || 'd4e5rlrk922mmk',
+    password: process.env.IMADPASSWORD || '4E-4rvokYpmN-16-1U3FFBtvD4',
+    host: process.env.IMADHOST || 'ec2-54-228-219-40.eu-west-1.compute.amazonaws.com',
+    port: '5432',
+    ssl: true
+  };
+  return config;
 }
 
 
@@ -813,6 +825,7 @@ function postTemplate(data){
 
 var port = process.env.PORT || 8080;  // Use 8080 for local development because you might already have apache running on 80
 app.listen(port, function () {
-        console.log(`DB details, user : `+config.user);
-  console.log(`IMAD course app listening on port ${port}!`);
+        // config.password = 
+        console.log(`DB details : `+config.user, config.host, config.port);
+        console.log(`IMAD course app listening on port ${port}!`);
 });

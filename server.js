@@ -152,14 +152,64 @@ app.post('/create-user', function (req, res) {
 
 app.get('/user/:username', function(req, res){
     var username = req.params.username;
-   pool.query("SELECT username, displaypic FROM users WHERE username=$1", [username], function (err, result) {
-      if (err) {
-          res.status(500).send(err.toString());
-      } else {
-          res.send(result.rows[0]);
-      }
-   }); 
-});
+    get_comments();
+    var htmlTemplate=`
+    <!DOCTYPE html>
+        <html lang="en">
+        <head>
+            <meta charset="utf-8">
+            <meta http-equiv="X-UA-Compatible" content="IE=edge">
+            <meta name="viewport" content="width=device-width, initial-scale=1">
+            <title>IMAD Blog WebApp</title>
+            <link href="vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+            <link href="css/clean-blog.min.css" rel="stylesheet">
+            <link href="vendor/font-awesome/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+            <link href='//fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic' rel='stylesheet' type='text/css'>
+            <link href='//fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800' rel='stylesheet' type='text/css'>
+            <link href="../css/modal.css" rel="stylesheet">
+            <link href="../css/post-comment.css" rel="stylesheet">
+        </head>
+        <body>
+    `;
+    for (var i = 0; i < comments.length; i++) {
+                if (comments[i].comment_author === username){ 
+                  htmlTemplate = htmlTemplate +  `
+                   <div class="col-sm-8 col-sm-offset-2">
+                        <div class="panel panel-white post panel-shadow">
+                            <div class="post-heading">
+                                <div class="pull-left image">
+                                    <a href=/user/`+comments[i].comment_author+`><img src="http://bootdey.com/img/Content/user_`+findUser(comments[i].comment_author).displaypic+`.jpg" class="img-circle avatar" alt="user profile image"></a>
+                                </div>
+                                <div class="pull-left meta">
+                                    <div class="title h5">
+                                        <a href=/user/`+comments[i].comment_author+`><b>`+comments[i].comment_author+`</b></a> made a comment.
+                                    </div>
+                                    <h6 class="text-muted time">`+(comments[i].comment_date).toGMTString()+`</h6>
+                                </div>
+                            </div> 
+                            <div class="post-description"> 
+                                <p>`+comments[i].comment_content+`</p>
+                            </div>
+                        </div>
+                    </div>
+                            
+                       ` ;
+                   }
+               }
+
+       htmlTemplate = htmlTemplate + `
+</body>
+       	            <script src="vendor/jquery/jquery.min.js"></script>
+            <script src="vendor/bootstrap/js/bootstrap.min.js"></script>
+            <script src="js/clean-blog.min.js"></script>
+            <script src="../main.js"></script>
+            <script src="../article.js"></script>
+        </body>
+        </html>
+
+       `;
+          res.send(htmlTemplate);
+});	
 
 app.get('/login.html', function(req, res){
     res.sendFile(path.join(__dirname, 'ui', 'login.html'));
@@ -288,8 +338,7 @@ function testdb(){
     database: process.env.IMADDB || 'd4e5rlrk922mmk',
     password: process.env.IMADPASSWORD || '4E-4rvokYpmN-16-1U3FFBtvD4',
     host: process.env.IMADHOST || 'ec2-54-228-219-40.eu-west-1.compute.amazonaws.com',
-    port: '5432',
-    ssl: true
+    port: '5432'
   };
   return config;
 }
@@ -740,11 +789,11 @@ function postTemplate(data){
                         <div class="panel panel-white post panel-shadow">
                             <div class="post-heading">
                                 <div class="pull-left image">
-                                    <img src="http://bootdey.com/img/Content/user_`+findUser(comments[i].comment_author).displaypic+`.jpg" class="img-circle avatar" alt="user profile image">
+                                    <a href=/user/`+comments[i].comment_author+`><img src="http://bootdey.com/img/Content/user_`+findUser(comments[i].comment_author).displaypic+`.jpg" class="img-circle avatar" alt="user profile image"></a>
                                 </div>
                                 <div class="pull-left meta">
                                     <div class="title h5">
-                                        <a href="#"><b>`+comments[i].comment_author+`</b></a> made a comment.
+                                        <a href=/user/`+comments[i].comment_author+`><b>`+comments[i].comment_author+`</b></a> made a comment.
                                     </div>
                                     <h6 class="text-muted time">`+(comments[i].comment_date).toGMTString()+`</h6>
                                 </div>

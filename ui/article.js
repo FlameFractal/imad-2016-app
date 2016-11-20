@@ -88,7 +88,7 @@ var date=new Date();
 			   										</div>
 				   									<div class="pull-left meta">
 				   										<div class="title h5">
-				   											<a href="#" id="author"><b>${commentAuthor}</b></a>
+				   											<a href="/user/${commentAuthor}" id="author"><b>${commentAuthor}</b></a>
 				   										</div>
 				   										<h6 class="text-muted time">${date.toGMTString()}</h6>
 				   									</div> 

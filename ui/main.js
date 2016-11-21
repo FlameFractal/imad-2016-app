@@ -68,6 +68,7 @@ if (login_btn) {
 							} else if (req.status === 500) {
 								alert('username does not exist!');
 							}
+							document.getElementById('login_btn').innerHTML="Log In";
 						}
 					};
 		
@@ -75,6 +76,7 @@ if (login_btn) {
 		req.open("POST", window.location.protocol+"//"+window.location.host+"/login", true);
 		req.setRequestHeader('Content-Type', 'application/json');
 		req.send(JSON.stringify({username: username, password: password}));
+		document.getElementById('login_btn').innerHTML="Logging In...";
 		}
 	}
 }
@@ -109,6 +111,7 @@ if (register_btn) {
 					console.log('password = '+new_password);
 					alert('username already exists!');
 				}
+				document.getElementById('register_btn').innerHTML="Register";
 			}
 		};
 			console.log(new_username);
@@ -116,6 +119,7 @@ if (register_btn) {
 		req.open("POST", window.location.protocol+"//"+window.location.host+"/create-user", true);
 		req.setRequestHeader('Content-Type', 'application/json');
 		req.send(JSON.stringify({username: new_username, password: new_password}));
+		document.getElementById('register_btn').innerHTML="Creating user...";
 	}
 		
 	}

@@ -109,14 +109,16 @@ var date=new Date();
 			   				}
 		   				}
 
-		   				req3.open("GET", window.location.protocol+"//"+window.location.host+"/user/"+commentAuthor, true);
+		   				req3.open("GET", window.location.protocol+"//"+window.location.host+"/getUser/"+commentAuthor, true);
 						req3.send(null);
 
    					}
+   					document.getElementById('submitComment').innerHTML="Submit";
    				}
    			};
 			req2.open("GET", window.location.protocol+"//"+window.location.host+"/submit-comment/"+post_id+"?content="+escapeHtml(commentContent), true);
-				req2.send(null);		
+			req2.send(null);	
+			document.getElementById('submitComment').innerHTML="Submitting..."	
 			}
 		}
 	}
@@ -137,7 +139,7 @@ function setdisplaypic(username){
 			}
 		};
 		
-		req.open("GET", window.location.protocol+"//"+window.location.host+"/user/"+username, true);
+		req.open("GET", window.location.protocol+"//"+window.location.host+"/getUser/"+username, true);
 		req.send(null);
 
 		// return 

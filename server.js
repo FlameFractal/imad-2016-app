@@ -298,9 +298,15 @@ function get_posts(){
     });
 }
 
-app.get('/getUsers', function (req, res) {
-   get_users();
-   res.send(users);
+app.get('/getUser/:username', function (req, res) {
+   var username = req.params.username;
+   pool.query("SELECT username, displaypic FROM users WHERE username=$1", [username], function (err, result) {
+      if (err) {
+          res.status(500).send(err.toString());
+      } else {
+          res.send(result.rows[0]);
+      }
+   });
 });
 
 function get_users() {
@@ -452,8 +458,8 @@ function homeTemplate(){
                                  <div class="">
                                         <div class="form-body">
                                             <ul class="nav nav-tabs final-login">
-                                                <li class="active"><a data-toggle="tab" href="#sectionA">Existing User</a></li>
-                                                <li><a data-toggle="tab" href="#sectionB">New User</a></li>
+                                                <li class="active"><a class="btn btn-sm" data-toggle="tab" href="#sectionA">Existing User</a></li>
+                                                <li><a class="btn btn-sm" data-toggle="tab" href="#sectionB">New User</a></li>
                                             </ul>
                                             <div class="tab-content">
                                                 <div id="sectionA" class="tab-pane fade in active">
@@ -463,7 +469,7 @@ function homeTemplate(){
                                                             <input type="text" id="username">
                                                             <label>Password</label>
                                                             <input type="password" id="password">
-                                                            <button type="button" id="login_btn">Sign In!</button>
+                                                            <button type="button" class="btn btn-info btn-sm" id="login_btn">Sign In</button>
                                                         </form>
                                                     </div>
                                                     <div class="clearfix"></div>
@@ -475,7 +481,7 @@ function homeTemplate(){
                                                             <input type="text" id="new_username">
                                                             <label>New Password</label>
                                                             <input type="password" id="new_password">
-                                                            <button type="button" id="register_btn">Register!</button>
+                                                            <button type="button" class="btn btn-info btn-sm" id="register_btn">Register</button>
                                                         </form>
                                                     </div>
                                                     
@@ -678,8 +684,8 @@ function postTemplate(data){
                                  <div class="">
                                         <div class="form-body">
                                             <ul class="nav nav-tabs final-login">
-                                                <li class="active"><a data-toggle="tab" href="#sectionA">Existing User</a></li>
-                                                <li><a data-toggle="tab" href="#sectionB">New User</a></li>
+                                                <li class="active"><a class="btn btn-sm" data-toggle="tab" href="#sectionA">Existing User</a></li>
+                                                <li><a class="btn btn-sm"  data-toggle="tab" href="#sectionB">New User</a></li>
                                             </ul>
                                             <div class="tab-content">
                                                 <div id="sectionA" class="tab-pane fade in active">
@@ -689,7 +695,7 @@ function postTemplate(data){
                                                             <input type="text" id="username">
                                                             <label>Password</label>
                                                             <input type="password" id="password">
-                                                            <button type="button" id="login_btn">Sign In!</button>
+                                                            <button type="button" class="btn btn-info btn-sm" id="login_btn">Sign In</button>
                                                         </form>
                                                     </div>
                                                     <div class="clearfix"></div>
@@ -701,7 +707,7 @@ function postTemplate(data){
                                                             <input type="text" id="new_username">
                                                             <label>New Password</label>
                                                             <input type="password" id="new_password">
-                                                            <button type="button" id="register_btn">Register!</button>
+                                                            <button type="button" class="btn btn-info btn-sm" id="register_btn">Register</button>
                                                         </form>
                                                     </div>
                                                     
@@ -725,9 +731,9 @@ function postTemplate(data){
 
                 <div class="container" id="asklogin">
                     <div class="row">
-                        <div class="col-md-8 col-md-offset-2">            
+                        <div class="col-sm-8 col-sm-offset-2">            
                             <br><br>
-                            <button type="button" class="btn btn-info btn-sm" data-toggle="modal" data-target="#login-modal">Login<span class="hide"> to comment!</span></button>
+                            <button type="button" class="btn btn-info btn-sm btn-block" data-toggle="modal" data-target="#login-modal">Login<span class="hide"> to comment!</span></button>
                             <br><br>
                         </div>
                     </div>

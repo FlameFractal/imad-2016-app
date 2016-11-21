@@ -338,7 +338,8 @@ function testdb(){
     database: process.env.IMADDB || 'd4e5rlrk922mmk',
     password: process.env.IMADPASSWORD || '4E-4rvokYpmN-16-1U3FFBtvD4',
     host: process.env.IMADHOST || 'ec2-54-228-219-40.eu-west-1.compute.amazonaws.com',
-    port: '5432'
+    port: '5432',
+    ssl: true
   };
   return config;
 }

@@ -29,7 +29,8 @@ var date=new Date();
    			if(e.keyCode==13 && !e.shiftKey){
    				// e.preventDefault();
    				commentContent = escapeHtml(document.getElementById('commentContent').value);
-   				if (commentContent === '') {
+   				if (commentContent.trim() === '') {
+   					$("#commentContent").val("");
    					$("#commentContent").attr("placeholder", "Comment is required !");
    				} else {
    				$('#submitComment').trigger('click');
@@ -43,16 +44,17 @@ var date=new Date();
 
    	submitComment.onclick = function(){
    		commentContent = escapeHtml(document.getElementById('commentContent').value);
+   		commentContent = commentContent.trim();
    		var date = new Date();
    		console.log(date);
 
-   		if (commentContent === '') {
+   		if (commentContent.trim()	 === '') {
    			$(document).bind('keypress', function(e) {
 	   			if(e.keyCode==13 && !e.shiftKey){
 	   				// e.preventDefault();
 	   			}
    			});
-
+   			$("#commentContent").val("");
    			$("#commentContent").attr("placeholder", "Comment is required !");
    		
    		} else {
@@ -70,7 +72,7 @@ var date=new Date();
 						req3.onreadystatechange = function(){
 							if(req3.readyState === XMLHttpRequest.DONE) {
 			   					if (req3.status === 200) {
-			   						console.log(req3.responseText);
+			   						// console.log(req3.responseText);
 			   						var new_comment = document.getElementById('new_comment');
 			   						$("#new_comment").removeAttr("style");
 			   						$("#commentContent").val("");

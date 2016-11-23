@@ -50,7 +50,9 @@ if (login_btn) {
 	login_btn.onclick = function(){
 			username = document.getElementById('username').value;
 		password = document.getElementById('password').value;
-		if (username === '' || password === '') {
+		if (username.trim() === '' || password.trim() === '') {
+			$("#username").val("");
+			$("#password").val("");
    					$("#username").attr("placeholder", "Required !");
    					$("#password").attr("placeholder", "Required !");
    				} else {
@@ -85,12 +87,14 @@ if (login_btn) {
 
 if (register_btn) {
 	register_btn.onclick = function(){
-			new_username = document.getElementById('new_username').value;
-		new_password = document.getElementById('new_password').value;
+			new_username = escapeHtml(document.getElementById('new_username').value);
+		new_password = escapeHtml(document.getElementById('new_password').value);
 
 		var req = new XMLHttpRequest();
 		var req2 = new XMLHttpRequest();
-		if (new_username === '' || new_password === '') {
+		if (new_username.trim() === '' || new_password.trim() === '') {
+					$("#new_username").val("");
+					$("#new_password").val("");
    					$("#new_username").attr("placeholder", "Required !");
    					$("#new_password").attr("placeholder", "Required !");
    				} else {	
@@ -157,4 +161,11 @@ function logout(){
 
 
 
-
+function escapeHtml(unsafe) {
+    return unsafe
+         .replace(/&/g, "&amp;")
+         .replace(/</g, "&lt;")
+         .replace(/>/g, "&gt;")
+         .replace(/"/g, "&quot;")
+         .replace(/'/g, "&#039;");
+}

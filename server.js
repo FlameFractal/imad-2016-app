@@ -752,7 +752,7 @@ function postTemplate(data){
                                     <div class="col-xs-8 meta">
                                         <form>
                                              <div class="form-group"> 
-                                               <textarea class="form-control" rows="5" id="commentContent" placeholder="Your comment here"></textarea>
+                                               <textarea class="form-control" rows="5" id="commentContent" placeholder="Your comment here. Press Enter to submit!"></textarea>
                                              </div>
                                              <button type="button" id="submitComment" class="btn btn-default">Submit</button>
                                              <button type="button" id="logout_btn" class="btn btn-default">LogOut</button>

@@ -176,3 +176,33 @@ function setdisplaypic(username){
 	}
 
 	$(document).ready(checklogin);
+
+
+
+//Render readme from github in Readme.md article post
+$(document).ready(function(){
+	$.ajax({
+	    type: "GET",
+	    dataType: "html",
+	    url: "https://raw.githubusercontent.com/FlameFractal/imad-2016-app/master/Readme.md",
+	    success: function(data1){
+	        $.ajax({
+	            type: "POST",
+	            dataType: "html",
+	            processData: false,
+	            url: "https://api.github.com/markdown/raw",
+	            data: data1,
+	            contentType: "text/plain",
+	            success: function(data2){
+	                $('#readme')[0].innerHTML = data2;
+	            }, 
+	            error: function(jqXHR, textStatus, error){
+	                console.log(jqXHR, textStatus, error);
+	            }
+	        });
+	    }, 
+	    error: function(jqXHR, textStatus, error){
+	        console.log(jqXHR, textStatus, error);
+	    }
+	});
+});

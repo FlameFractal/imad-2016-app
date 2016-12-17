@@ -168,6 +168,15 @@ app.get('/user/:username', function(req, res){
             <link href='//fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800' rel='stylesheet' type='text/css'>
             <link href="../css/modal.css" rel="stylesheet">
             <link href="../css/post-comment.css" rel="stylesheet">
+            <script>
+              (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+              (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+              m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+              })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+
+              ga('create', 'UA-89136252-3', 'auto');
+              ga('send', 'pageview');
+            </script>
         </head>
         <body>
     `;
@@ -366,6 +375,15 @@ function homeTemplate(){
             <link href='//fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic' rel='stylesheet' type='text/css'>
             <link href='//fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800' rel='stylesheet' type='text/css'>
             <link href="../css/modal.css" rel="stylesheet">
+            <script>
+              (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+              (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+              m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+              })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+
+              ga('create', 'UA-89136252-3', 'auto');
+              ga('send', 'pageview');
+            </script>
         </head>
         <body>
             <nav class="navbar navbar-default navbar-custom navbar-fixed-top">
@@ -569,6 +587,15 @@ function postTemplate(data){
             <link href='//fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800' rel='stylesheet' type='text/css'>
             <link href="../css/post-comment.css" rel="stylesheet">
             <link href="../css/modal.css" rel="stylesheet">
+            <script>
+              (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+              (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+              m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+              })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+
+              ga('create', 'UA-89136252-3', 'auto');
+              ga('send', 'pageview');
+            </script>
         </head>
         <body>
             <nav class="navbar navbar-default navbar-custom navbar-fixed-top">

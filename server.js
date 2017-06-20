@@ -124,7 +124,7 @@ app.get('/posts/:postID', function (req, res) {
     get_posts();
     get_comments();
     get_users();
-    if(posts[postID])
+    if(posts[req.params.postID])
     	res.send(postTemplate(req.params.postID));
     else
 	res.send("404");

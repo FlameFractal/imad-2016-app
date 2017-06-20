@@ -124,7 +124,10 @@ app.get('/posts/:postID', function (req, res) {
     get_posts();
     get_comments();
     get_users();
-    res.send(postTemplate(req.params.postID));
+    if(posts[postID]
+    	res.send(postTemplate(req.params.postID));
+    else
+	res.send("404");
 });
 
 function hash (input, salt) {

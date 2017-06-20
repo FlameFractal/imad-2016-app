@@ -294,7 +294,7 @@ function get_comments(){
 }
 
 function get_posts(){
-    pool.query('SELECT * from posts ORDER BY post_id DESC', function(err, results){
+    pool.query('SELECT * from posts ORDER BY post_id', function(err, results){
         if (err){
             return(err.toString());
         } else {
@@ -435,7 +435,7 @@ function homeTemplate(){
             `;
 
             
-            for (var postID=posts.length-1; postID>=0; postID--){
+            for (var postID=0; postID<posts.length; postID++){
                 var title = posts[postID].post_title;
                 var subtitle = posts[postID].post_subtitle;
                 var author = posts[postID].post_author;

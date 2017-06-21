@@ -124,9 +124,10 @@ app.get('/posts/:postID', function (req, res) {
     get_posts();
     get_comments();
     get_users();
-    if(posts[req.params.postID])
-    	res.send(postTemplate(req.params.postID));
-    else
+    for (var i=posts.length-1; i>0; i--){
+      if(posts[i].post_id == req.params.postID)
+      	res.send(postTemplate(req.params.postID));
+    }
 	   res.send(template404(req.params.postID));
 });
 
@@ -442,10 +443,11 @@ function homeTemplate(){
                 var subtitle = posts[postID].post_subtitle;
                 var author = posts[postID].post_author;
                 var date = (posts[postID].post_date).toDateString();
+                var id = posts[postID].post_id;
 
                 htmlTemplate = htmlTemplate + `
                  <div class="post-preview">
-                            <a href="posts/${postID}">
+                            <a href="posts/${id}">
                                 <h2 class="post-title">
                                     ${title}
                                 </h2>
@@ -641,7 +643,6 @@ function template404(postID){
 
             else {
               htmlTemplate = htmlTemplate + `
-
                     <h2> Post with ID: <div color="blue" style="color: cadetblue; display: inline;">${postID}</div> either does not exist, 
                         <br><br> Or it's being written right now! Check again later. 
                     </h2>
@@ -702,7 +703,6 @@ function template404(postID){
     </div>
     </div>
     </div>
-
     <footer>
         <div class="container">
             <div class="row">

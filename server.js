@@ -561,7 +561,7 @@ function homeTemplate(){
     return htmlTemplate;
 };
 
-function template404(post_id){
+function template404(postID){
     var htmlTemplate = `
     <!DOCTYPE html>
     <html lang="en">
@@ -641,7 +641,7 @@ function template404(post_id){
             else {
               htmlTemplate = htmlTemplate + `
 
-                    <h2> Post with ID: <div color="blue" style="color: cadetblue; display: inline;">${post_id}</div> either does not exist, 
+                    <h2> Post with ID: <div color="blue" style="color: cadetblue; display: inline;">${postID}</div> either does not exist, 
                         <br><br> Or it's being written right now! Check again later. 
                     </h2>
                 </div>

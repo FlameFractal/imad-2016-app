@@ -124,11 +124,17 @@ app.get('/posts/:postID', function (req, res) {
     get_posts();
     get_comments();
     get_users();
+    var sent=0;
     for (var i=posts.length-1; i>=0; i--){
-      if(posts[i].post_id == req.params.postID)
+      if(posts[i].post_id == req.params.postID){
       	res.send(postTemplate(i));
+        sent=1;
+      }
     }
+    // 404
+    if (sent==0) {
 	   res.send(template404(req.params.postID));
+    }
 });
 
 function hash (input, salt) {

@@ -127,7 +127,7 @@ app.get('/posts/:postID', function (req, res) {
     if(posts[req.params.postID])
     	res.send(postTemplate(req.params.postID));
     else
-	res.send("404");
+	   res.send(template404(req.params.postID));
 });
 
 function hash (input, salt) {
@@ -176,7 +176,6 @@ app.get('/user/:username', function(req, res){
               (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
               m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
               })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
-
               ga('create', 'UA-89136252-3', 'auto');
               ga('send', 'pageview');
             </script>
@@ -218,7 +217,6 @@ app.get('/user/:username', function(req, res){
             <script src="../article.js"></script>
         </body>
         </html>
-
        `;
           res.send(htmlTemplate);
 });	
@@ -284,6 +282,9 @@ app.get('/logout', function (req, res) {
    res.send('<html><body>Logged out!<br/><br/><a href="/">Back to home</a></body></html>');
 });
 
+app.get('/*', function (req, res) {
+  res.send(template404(-1));
+});
 
 // Make this into a app.get !!!
 function get_comments(){
@@ -383,7 +384,6 @@ function homeTemplate(){
               (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
               m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
               })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
-
               ga('create', 'UA-89136252-3', 'auto');
               ga('send', 'pageview');
             </script>
@@ -434,7 +434,6 @@ function homeTemplate(){
             <div class="container">
                 <div class="row">
                     <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
-
             `;
 
             
@@ -445,7 +444,6 @@ function homeTemplate(){
                 var date = (posts[postID].post_date).toDateString();
 
                 htmlTemplate = htmlTemplate + `
-
                  <div class="post-preview">
                             <a href="posts/${postID}">
                                 <h2 class="post-title">
@@ -465,12 +463,10 @@ function homeTemplate(){
             </div>
                 </div>
             </div>
-
             <!-- Ask to login/register -->
                 <!-- Modal -->
                 <div id="login-modal" class="modal fade" role="dialog">
                   <div class="modal-dialog">
-
                     <!-- Modal content-->
                     <div class="modal-content">
                       <div class="modal-body">
@@ -517,7 +513,6 @@ function homeTemplate(){
                         <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
                       </div>
                     </div>
-
                   </div>
                 </div>
                 
@@ -566,6 +561,192 @@ function homeTemplate(){
     return htmlTemplate;
 };
 
+function template404(post_id){
+    var htmlTemplate = `
+    <!DOCTYPE html>
+    <html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>IMAD Blog WebApp</title>
+        <link href="vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+        <link href="css/clean-blog.min.css" rel="stylesheet">
+        <link href="vendor/font-awesome/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+        <link href='//fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic' rel='stylesheet' type='text/css'>
+        <link href='//fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800' rel='stylesheet' type='text/css'>
+        <link href="../css/modal.css" rel="stylesheet">
+        <script>
+          (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+              (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+              m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+          })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+          ga('create', 'UA-89136252-3', 'auto');
+          ga('send', 'pageview');
+      </script>
+    </head>
+    <body>
+        <nav class="navbar navbar-default navbar-custom navbar-fixed-top">
+            <div class="container-fluid">
+                <div class="navbar-header page-scroll">
+                    <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
+                        <span class="sr-only">Toggle navigation</span>    <i class="fa fa-bars"></i>
+                    </button>
+                    <a class="navbar-brand" href="/">Vishal</a>
+                </div>
+                <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+                    <ul class="nav navbar-nav navbar-right">
+                        <li>
+                            <a href="/">Home</a>
+                        </li>
+                        <li>
+                            <a href="/about">About</a>
+                        </li>
+                        <li>
+                            <a href="/contact">Contact</a>
+                        </li>
+                        <li>
+                            <a id="loginnavbar" data-toggle="modal" data-target="#login-modal" href="#">Login/Register</a>
+                        </li>
+                        <li>
+                            <a id="logoutnavbar" onclick="logout()" href="">Logout</a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </nav>
+        <header class="intro-header" style="background-image: url('img/home-bg.jpg')">
+            <div class="container">
+                <div class="row">
+                    <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                        <div class="site-heading">
+                            <h1>Blog</h1>
+                            <hr class="small">
+                            <span class="subheading">404</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </header>
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                  `;
+            if (postID == -1) {
+            htmlTemplate = htmlTemplate + `
+              <h2> Oops! Could not find the page you were looking for!</h2>
+                </div>
+            </div> `; }  
+
+            else {
+              htmlTemplate = htmlTemplate + `
+
+                    <h2> Post with ID: <div color="blue" style="color: cadetblue; display: inline;">${post_id}</div> either does not exist, 
+                        <br><br> Or it's being written right now! Check again later. 
+                    </h2>
+                </div>
+            </div> `; }
+
+            htmlTemplate = htmlTemplate + `
+        </div>
+        <!-- Ask to login/register -->
+        <!-- Modal -->
+        <div id="login-modal" class="modal fade" role="dialog">
+          <div class="modal-dialog">
+            <!-- Modal content-->
+            <div class="modal-content">
+              <div class="modal-body">
+                <div class="container-fluid">
+                   <div class="row">
+                       <div class="">
+                        <div class="form-body">
+                            <ul class="nav nav-tabs final-login">
+                                <li class="active"><a class="btn btn-sm" data-toggle="tab" href="#sectionA">Existing User</a></li>
+                                <li><a class="btn btn-sm" data-toggle="tab" href="#sectionB">New User</a></li>
+                            </ul>
+                            <div class="tab-content">
+                                <div id="sectionA" class="tab-pane fade in active">
+                                    <div class="innter-form">
+                                        <form class="sa-innate-form" method="post">
+                                            <label>Username</label>
+                                            <input type="text" id="username">
+                                            <label>Password</label>
+                                            <input type="password" id="password">
+                                            <button type="button" class="btn btn-info btn-sm" id="login_btn">Sign In</button>
+                                        </form>
+                                    </div>
+                                    <div class="clearfix"></div>
+                                </div>
+                                <div id="sectionB" class="tab-pane fade">
+                                    <div class="innter-form">
+                                        <form class="sa-innate-form" method="post">
+                                            <label>New Username</label>
+                                            <input type="text" id="new_username">
+                                            <label>New Password</label>
+                                            <input type="password" id="new_password">
+                                            <button type="button" class="btn btn-info btn-sm" id="register_btn">Register</button>
+                                        </form>
+                                    </div>
+                                    
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+        </div>
+    </div>
+    </div>
+    </div>
+
+    <footer>
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                    <ul class="list-inline text-center">
+                        <li>
+                            <a href="https://twitter.com/vishal_gauba">
+                                <span class="fa-stack fa-lg">
+                                    <i class="fa fa-circle fa-stack-2x"></i>
+                                    <i class="fa fa-twitter fa-stack-1x fa-inverse"></i>
+                                </span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="https://www.facebook.com/vishal.gauba">
+                                <span class="fa-stack fa-lg">
+                                    <i class="fa fa-circle fa-stack-2x"></i>
+                                    <i class="fa fa-facebook fa-stack-1x fa-inverse"></i>
+                                </span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="https://github.com/flamefractal">
+                                <span class="fa-stack fa-lg">
+                                    <i class="fa fa-circle fa-stack-2x"></i>
+                                    <i class="fa fa-github fa-stack-1x fa-inverse"></i>
+                                </span>
+                            </a>
+                        </li>
+                    </ul>
+                    <p class="copyright text-muted">This website has been visited <b><span id="counter"></span></b> times since inception.</p>
+                </div>
+            </div>
+        </div>
+    </footer>
+    <script src="vendor/jquery/jquery.min.js"></script>
+    <script src="vendor/bootstrap/js/bootstrap.min.js"></script>
+    <script src="js/clean-blog.min.js"></script>
+    <script src="../main.js"></script>
+    <script src="../article.js"></script>
+    </body>
+    </html>`
+    return htmlTemplate;
+}
+
 function postTemplate(data){
     
     var postID = data;
@@ -595,7 +776,6 @@ function postTemplate(data){
               (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
               m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
               })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
-
               ga('create', 'UA-89136252-3', 'auto');
               ga('send', 'pageview');
             </script>
@@ -705,7 +885,6 @@ function postTemplate(data){
                 <!-- Modal -->
                 <div id="login-modal" class="modal fade" role="dialog">
                   <div class="modal-dialog">
-
                     <!-- Modal content-->
                     <div class="modal-content">
                       <div class="modal-body">
@@ -752,13 +931,10 @@ function postTemplate(data){
                         <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
                       </div>
                     </div>
-
                   </div>
                 </div>
                 
-
                 <!-- Trigger the modal with a button -->
-
                 <div class="container" id="asklogin">
                     <div class="row">
                         <div class="col-sm-8 col-sm-offset-2">            
@@ -768,8 +944,6 @@ function postTemplate(data){
                         </div>
                     </div>
                 </div>
-
-
            <!-- Comment box -->
                 <div class="container" id="commentbox">
                     <div class="row">
@@ -814,7 +988,6 @@ function postTemplate(data){
                    		</div>
                    	</div>
                    </div> 
-
                    <div class="container">
                     <div class="row" id="new_comment">
                      

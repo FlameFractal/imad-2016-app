@@ -124,9 +124,9 @@ app.get('/posts/:postID', function (req, res) {
     get_posts();
     get_comments();
     get_users();
-    for (var i=posts.length-1; i>0; i--){
+    for (var i=posts.length-1; i>=0; i--){
       if(posts[i].post_id == req.params.postID)
-      	res.send(postTemplate(req.params.postID));
+      	res.send(postTemplate(i));
     }
 	   res.send(template404(req.params.postID));
 });

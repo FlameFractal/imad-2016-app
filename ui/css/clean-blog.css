@@ -9,7 +9,10 @@
   opacity: 1;
 }
 
-
+img {
+  max-width: 100%;
+  height:auto
+}
 
 /*!
  * Start Bootstrap - Clean Blog v3.3.7+1 (http://startbootstrap.com/template-overviews/clean-blog)
